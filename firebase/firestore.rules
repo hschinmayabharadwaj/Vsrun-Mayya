@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Services catalog — public read, admin write only
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Applications — citizens read own; writes via backend Admin SDK only
+    match /applications/{applicationId} {
+      allow read: if resource.data.citizenId == request.auth.uid
+                  || request.auth == null;
+      allow write: if false;
+    }
+
+    // Notifications — citizens read own
+    match /notifications/{notificationId} {
+      allow read: if resource.data.citizenId == request.auth.uid
+                  || request.auth == null;
+      allow write: if false;
+    }
+
+    // Drafts — citizens read/write own (when auth enabled)
+    match /drafts/{draftId} {
+      allow read, write: if resource.data.citizenId == request.auth.uid;
+    }
+  }
+}

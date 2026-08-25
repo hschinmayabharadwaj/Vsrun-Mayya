@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --gov-red: #a6192e;
+  --gov-red-dark: #8b1426;
+  --gov-link: #004b87;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter);
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
+::selection {
+  background-color: rgba(166, 25, 46, 0.12);
+  color: #1a1a1a;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(166, 25, 46, 0.35);
+  border-radius: 2px;
+}
+
+button,
+a {
+  min-height: 44px;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+@layer components {
+  .gov-btn-primary {
+    background-color: var(--gov-red);
+    color: #ffffff;
+    border: 1px solid var(--gov-red);
+    font-weight: 600;
+  }
+
+  .gov-btn-primary:hover {
+    background-color: var(--gov-red-dark);
+    border-color: var(--gov-red-dark);
+  }
+
+  .gov-btn-outline {
+    background-color: #ffffff;
+    color: var(--gov-red);
+    border: 1px solid var(--gov-red);
+    font-weight: 600;
+  }
+
+  .gov-btn-outline:hover {
+    background-color: #fdf2f4;
+  }
+
+  .btn-primary {
+    @apply gov-btn-primary rounded;
+  }
+
+  .btn-outline {
+    @apply gov-btn-outline rounded;
+  }
+
+  .gov-card {
+    @apply bg-white border border-neutral-300 p-5;
+  }
+}
+
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:not([type='checkbox']):not([type='radio']):focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--gov-red) !important;
+  box-shadow: 0 0 0 2px rgba(166, 25, 46, 0.15);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
