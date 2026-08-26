@@ -70,7 +70,7 @@ stateDiagram-v2
 | `POST` | `/api/grievances` | File grievance |
 | `GET` | `/api/portal/*` | Portal content (10 endpoints) |
 
-See **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for full diagrams, API reference, and scaling notes. See **[docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** for testing procedures.
+See **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for full diagrams, API reference, and scaling notes.
 
 ## Quick start
 
