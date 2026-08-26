@@ -45,13 +45,13 @@ graph TB
 
     subgraph Backend["Backend — FastAPI (port 4000)"]
         FastAPIApp["FastAPI App<br/>app/main.py"]
-        Routers["Routers<br/>services · applications · dashboard · grievances · portal"]
+        Routers["Routers<br/>auth · services · applications · dashboard · grievances · portal"]
         DataStore["DataStore<br/>Dual-mode: Memory / Firestore"]
         FirebaseClient["Firebase Client<br/>Admin SDK"]
     end
 
     subgraph Database["Database"]
-        Firestore["Cloud Firestore<br/>4 Collections"]
+        Firestore["Cloud Firestore<br/>5 Collections"]
         MemoryStore["In-Memory Store<br/>Fallback mode"]
     end
 
@@ -438,6 +438,7 @@ graph LR
 |--------|------|-------------|--------------|----------|
 | `GET` | `/` | — | — | Server info + docs URL |
 | `GET` | `/api/health` | — | — | `{ status, timestamp, storage, environment, version }` |
+| `POST` | `/api/auth/register` | — | `RegisterUserPayload` | `Citizen` (201) |
 | `GET` | `/api/services` | `category?`, `search?`, `onlineOnly?`, `popular?` | — | `Service[]` + `meta.total` |
 | `GET` | `/api/services/:slug` | — | — | `Service` |
 | `GET` | `/api/applications` | `citizenId?` | — | `Application[]` + `meta.total` |
@@ -456,13 +457,13 @@ graph LR
 
 ## Authentication & Security
 
-### Current State (Prototype)
+### Current State
 
 ```mermaid
 graph TD
-    Auth["Authentication"] -->|"Not implemented"| OpenAPI["All endpoints open"]
-    Auth -->|"Demo mode"| DemoUser["citizenId = demo-citizen-001"]
-    Auth -->|"Hardcoded OTP"| OTP["123456"]
+    Firebase["Firebase Authentication<br/>email + password"] -->|"ID token"| Auth["FastAPI auth dependency"]
+    Auth -->|"POST /api/auth/register"| Citizen["citizens/{uid}"]
+    Auth -->|"Bearer token required"| Protected["Applications · dashboard<br/>tracking · grievances"]
     Auth -->|"Rate limiting"| RL["300 req/min/IP"]
     Auth -->|"CORS"| CORS["localhost:3000 only"]
 ```
@@ -470,15 +471,16 @@ graph TD
 | Layer | Protection | Notes |
 |-------|-----------|-------|
 | CORS | Origin whitelist | `http://localhost:3000` |
+| Authentication | Firebase ID token | Backend verifies the token and registers the citizen by Firebase UID |
 | Rate Limiting | 300 req/min per IP | In-memory, resets on restart |
 | Input Validation | Pydantic models | Auto-validated by FastAPI |
 | Firestore Rules | citizenId ownership | Client reads own data only |
 | Backend Writes | Admin SDK only | All writes go through API |
 
-### Production Security Requirements
+### Remaining Production Security Requirements
 
-- [ ] Firebase Authentication (email/password or phone OTP)
-- [ ] JWT token validation middleware
+- [x] Firebase Authentication (email/password)
+- [x] JWT token validation middleware
 - [ ] Environment-based CORS (not hardcoded)
 - [ ] HTTPS enforcement
 - [ ] Secrets in environment variables only
