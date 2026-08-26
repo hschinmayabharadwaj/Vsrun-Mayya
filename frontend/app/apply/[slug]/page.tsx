@@ -153,17 +153,22 @@ export default function ApplyPage() {
   return (
     <>
       {/* Sub-header */}
-      <div className="bg-surface border-b border-outline-variant/50 py-3 px-margin-mobile md:px-margin-desktop flex justify-between items-center shadow-soft">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-            <Icon name="description" filled className="text-white" size={16} />
+      <div className="bg-surface border-b border-outline-variant/50 py-3 px-margin-mobile md:px-margin-desktop">
+        <div className="max-w-3xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
+              <Icon name="description" filled className="text-white" size={18} />
+            </div>
+            <div>
+              <span className="text-body-md font-bold text-on-surface hidden sm:block">Apply: {service.name}</span>
+              <span className="text-label-sm text-on-surface-variant sm:hidden">{service.name}</span>
+            </div>
           </div>
-          <span className="text-body-md font-bold text-on-surface hidden sm:block">Apply: {service.name}</span>
+          <Link href="/services" className="text-secondary hover:underline text-label-md flex items-center gap-1.5 min-h-[44px] group">
+            <Icon name="close" size={18} className="group-hover:rotate-90 transition-transform" />
+            Cancel
+          </Link>
         </div>
-        <Link href="/services" className="text-secondary hover:underline text-label-md flex items-center gap-1.5 min-h-[44px] group">
-          <Icon name="arrow_back" size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-          Cancel
-        </Link>
       </div>
 
       <main className="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
@@ -343,16 +348,16 @@ export default function ApplyPage() {
                     <div className="space-y-1">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
-                          { label: 'Full Name', value: `${form.firstName} ${form.lastName}`, icon: 'person' },
-                          { label: 'Date of Birth', value: form.dob, icon: 'calendar_today' },
-                          { label: 'Address', value: `${form.address}, ${form.city} — ${form.pincode}`, icon: 'home' },
-                          { label: 'Service', value: service.name, icon: 'description' },
-                          { label: 'Department', value: service.department, icon: 'apartment' },
-                          { label: 'Purpose', value: form.purpose || '—', icon: 'flag' },
+                          { label: 'Full Name', value: `${form.firstName} ${form.lastName}`, icon: 'person', color: 'text-info' },
+                          { label: 'Date of Birth', value: form.dob, icon: 'calendar_today', color: 'text-secondary' },
+                          { label: 'Address', value: `${form.address}, ${form.city} — ${form.pincode}`, icon: 'home', color: 'text-success' },
+                          { label: 'Service', value: service.name, icon: 'description', color: 'text-purple-600' },
+                          { label: 'Department', value: service.department, icon: 'apartment', color: 'text-amber-600' },
+                          { label: 'Purpose', value: form.purpose || '—', icon: 'flag', color: 'text-error' },
                         ].map((item) => (
                           <div key={item.label} className="flex items-start gap-3 p-3 bg-neutral-50 rounded-xl">
-                            <div className="w-8 h-8 rounded-lg bg-secondary/8 flex items-center justify-center shrink-0 mt-0.5">
-                              <Icon name={item.icon} size={16} className="text-secondary" />
+                            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 mt-0.5 border border-outline-variant/50">
+                              <Icon name={item.icon} size={16} className={item.color} />
                             </div>
                             <div>
                               <p className="text-label-sm text-on-surface-variant">{item.label}</p>

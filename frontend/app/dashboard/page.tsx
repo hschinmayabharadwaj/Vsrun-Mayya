@@ -73,6 +73,8 @@ export default function DashboardPage() {
       <FadeIn>
         <header className="mb-8">
           <div className="flex items-center gap-4 mb-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/Emblem_of_India.svg" alt="" className="w-10 h-10 shrink-0" />
             <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center text-white text-xl font-bold shadow-soft">
               {firstName[0]}
             </div>

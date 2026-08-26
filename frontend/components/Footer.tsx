@@ -23,9 +23,8 @@ export async function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white text-sm font-bold shadow-soft">
-                IN
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.webp" alt="Portal Logo" className="w-10 h-10 rounded-lg" />
               <div>
                 <p className="font-bold text-on-surface">{config.siteName}</p>
                 <p className="text-label-sm text-on-surface-variant">{config.siteTagline}</p>
@@ -88,11 +87,15 @@ export async function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 pt-6 border-t border-outline-variant flex flex-col sm:flex-row justify-between gap-3 text-label-sm text-on-surface-variant">
+        <div className="mt-8 pt-6 border-t border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-3 text-label-sm text-on-surface-variant">
           <p>&copy; {new Date().getFullYear()} {config.siteName}. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/privacy" className="hover:text-secondary transition-colors min-h-0">Privacy</Link>
             <Link href="/terms" className="hover:text-secondary transition-colors min-h-0">Terms</Link>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/indian-flag.svg" alt="Indian Flag" className="h-4 rounded-sm" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/digital-india.svg" alt="Digital India" className="h-8 opacity-70" />
           </div>
         </div>
       </div>

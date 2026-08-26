@@ -19,6 +19,35 @@ export const IMAGES = {
     height: 1080,
   },
 
+  // Carousel / Banner images
+  carousel: [
+    {
+      src: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=80',
+      alt: 'Government-citizen partnership',
+      caption: 'Your trusted platform for government services',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=80',
+      alt: 'Digital India initiative',
+      caption: 'Digital India — Access services from anywhere',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1569025690938-a00729c9e1f9?w=1400&q=80',
+      alt: 'Government building',
+      caption: 'Transparent governance at your fingertips',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1400&q=80',
+      alt: 'Citizen using mobile services',
+      caption: 'Apply, track, and resolve — all in one place',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1400&q=80',
+      alt: 'Professional documentation',
+      caption: 'Streamlined processes for faster resolution',
+    },
+  ],
+
   // Service Categories
   services: {
     identity: {

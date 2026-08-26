@@ -110,7 +110,11 @@ export default function ServicesContent() {
       <main className="flex-1 p-5 md:p-8 bg-background">
         <div className="mb-8">
           <FadeIn>
-            <h1 className="text-headline-lg text-on-surface mb-1">Services Directory</h1>
+            <div className="flex items-center gap-3 mb-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/Emblem_of_India.svg" alt="" className="w-8 h-8" />
+              <h1 className="text-headline-lg text-on-surface">Services Directory</h1>
+            </div>
             <p className="text-body-lg text-on-surface-variant">
               Browse and apply for official government services online.
               {search && <span className="block mt-1 text-secondary font-medium">Showing results for &ldquo;{search}&rdquo;</span>}

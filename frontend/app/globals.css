@@ -32,8 +32,6 @@ body {
 
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 75, 135, 0.3);
-  border-radius: 6px;
 }
 
 button,
@@ -149,15 +147,27 @@ a {
 input:not([type='checkbox']):not([type='radio']),
 select,
 textarea {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 input:not([type='checkbox']):not([type='radio']):focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--gov-red) !important;
-  box-shadow: 0 0 0 3px rgba(166, 25, 46, 0.1);
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* Kill any focus-visible ring site-wide */
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Restore focus only for keyboard nav on interactive elements */
+*:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 ::-webkit-scrollbar {
@@ -182,6 +192,15 @@ textarea:focus {
   100% { background-position: -200% 0; }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
 @keyframes pulseDot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.2); }
@@ -195,4 +214,30 @@ textarea:focus {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Accessibility modes */
+.a11y-high-contrast {
+  filter: contrast(1.3);
+}
+
+.a11y-large-text {
+  font-size: 120%;
+}
+
+.a11y-large-text .text-label-sm { font-size: 0.875rem; }
+.a11y-large-text .text-label-md { font-size: 1rem; }
+.a11y-large-text .text-body-sm { font-size: 1rem; }
+.a11y-large-text .text-body-md { font-size: 1.125rem; }
+
+.a11y-reduce-motion *,
+.a11y-reduce-motion *::before,
+.a11y-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+.a11y-reduce-motion .animate-marquee {
+  animation: none !important;
 }
