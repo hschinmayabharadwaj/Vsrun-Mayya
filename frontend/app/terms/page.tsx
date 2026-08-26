@@ -19,13 +19,13 @@ export default async function TermsPage() {
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Terms' }]}
     >
       {config && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-900 text-body-sm">
+        <div className="mb-6 p-4 bg-warning/10 border border-warning/20 text-on-surface rounded-xl text-body-sm">
           <strong>Prototype notice:</strong> {config.prototypeNotice}
         </div>
       )}
 
       {error ? (
-        <div className="p-4 bg-red-50 text-red-800 border border-red-200" role="alert">
+        <div className="p-4 bg-error/5 text-error rounded-xl border border-error/20 text-body-sm" role="alert">
           {error}
         </div>
       ) : (

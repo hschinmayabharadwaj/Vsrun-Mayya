@@ -20,13 +20,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
 
           {/* Main content */}
-          <main className="flex-1 w-full max-w-2xl mx-auto px-4 py-6 md:py-8">
+          <main className="flex-1 w-full max-w-container-max mx-auto px-2 md:px-4 py-6 md:py-8">
             {children}
           </main>
 
           {/* Footer */}
-          <footer className="w-full bg-primary text-white px-4 py-6 mt-12 border-t-2 border-primary-light">
-            <div className="max-w-2xl mx-auto">
+          <footer className="w-full bg-primary text-white px-2 md:px-4 py-6 mt-12 border-t-2 border-primary-light">
+            <div className="max-w-container-max mx-auto">
               <p className="text-sm text-gray-300">
                 This is a demonstration platform designed for the Public Service
                 Hackathon.
