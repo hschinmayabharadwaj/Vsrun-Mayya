@@ -1,26 +1,112 @@
-import clsx from 'clsx';
+import {
+  SearchX,
+  Home,
+  ChevronRight,
+  Cookie,
+  Tag,
+  StickyNote,
+  Landmark,
+  ArrowRight,
+  ArrowLeft,
+  Phone,
+  CircleCheckBig,
+  Target,
+  AlertCircle,
+  Send,
+  Search,
+  User,
+  X,
+  Menu,
+  Mail,
+  Info,
+  Clock,
+  MapPin,
+  FileText,
+  Check,
+  Lock,
+  Upload,
+  FlaskConical,
+  LayoutDashboard,
+  ClipboardCheck,
+  FilePen,
+  Bell,
+  Lightbulb,
+  RefreshCw,
+  LayoutGrid,
+  ThumbsUp,
+  Calendar,
+  Building2,
+  Flag,
+  AlertTriangle,
+  Fingerprint,
+  GraduationCap,
+  Hospital,
+  Store,
+  Badge,
+  type LucideIcon,
+} from 'lucide-react';
+
+const iconMap: Record<string, LucideIcon> = {
+  search_off: SearchX,
+  home: Home,
+  chevron_right: ChevronRight,
+  cookie: Cookie,
+  tag: Tag,
+  sticky_note_2: StickyNote,
+  account_balance: Landmark,
+  arrow_forward: ArrowRight,
+  arrow_back: ArrowLeft,
+  call: Phone,
+  phone: Phone,
+  phone_in_talk: Phone,
+  check_circle: CircleCheckBig,
+  track_changes: Target,
+  error: AlertCircle,
+  send: Send,
+  search: Search,
+  person: User,
+  close: X,
+  menu: Menu,
+  email: Mail,
+  info: Info,
+  schedule: Clock,
+  location_on: MapPin,
+  description: FileText,
+  check: Check,
+  lock: Lock,
+  upload_file: Upload,
+  science: FlaskConical,
+  dashboard: LayoutDashboard,
+  task: ClipboardCheck,
+  task_alt: ClipboardCheck,
+  edit_document: FilePen,
+  notifications: Bell,
+  lightbulb: Lightbulb,
+  update: RefreshCw,
+  apps: LayoutGrid,
+  thumb_up: ThumbsUp,
+  calendar_today: Calendar,
+  apartment: Building2,
+  business: Building2,
+  flag: Flag,
+  report_problem: AlertTriangle,
+  fingerprint: Fingerprint,
+  school: GraduationCap,
+  local_hospital: Hospital,
+  storefront: Store,
+  badge: Badge,
+};
 
 export function Icon({
   name,
-  filled = false,
-  className,
   size = 24,
+  className,
 }: {
   name: string;
   filled?: boolean;
   className?: string;
   size?: number;
 }) {
-  return (
-    <span
-      className={clsx('material-symbols-outlined leading-none', className)}
-      style={{
-        fontSize: size,
-        fontVariationSettings: filled ? "'FILL' 1" : "'FILL' 0",
-      }}
-      aria-hidden="true"
-    >
-      {name}
-    </span>
-  );
+  const LucideIcon = iconMap[name] ?? AlertCircle;
+  return <LucideIcon size={size} className={className} aria-hidden="true" />;
 }

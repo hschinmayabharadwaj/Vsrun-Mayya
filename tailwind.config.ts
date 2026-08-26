@@ -22,6 +22,9 @@ const config: Config = {
       spacing: {
         '44px': '44px',
       },
+      maxWidth: {
+        'container-max': '1200px',
+      },
       minHeight: {
         '44px': '44px',
       },

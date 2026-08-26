@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getHelplines } from '@/lib/portal-api';
 import { InfoPageLayout, ContentCard } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 export default async function HelplinePage() {
   let emergency: Awaited<ReturnType<typeof getHelplines>>['emergency'] = [];
@@ -27,35 +28,37 @@ export default async function HelplinePage() {
       ]}
     >
       {error ? (
-        <div className="p-4 bg-red-50 text-red-800 border border-red-200" role="alert">
+        <div className="p-4 bg-error/5 text-error rounded-xl border border-error/20 text-body-sm" role="alert">
           {error}
         </div>
       ) : (
         <>
           <ContentCard title="Emergency Numbers">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {emergency.map((item) => (
-                <article key={item.number} className="gov-card text-center">
-                  <div className="flex justify-center mb-3">
-                    <span className="w-10 h-10 border border-neutral-300 flex items-center justify-center">
-                      <Icon name={item.icon ?? 'call'} size={22} className="text-gov-red" />
-                    </span>
-                  </div>
-                  <p className="text-headline-lg font-bold text-gov-link mb-1">{item.number}</p>
-                  <p className="text-body-sm font-semibold text-on-surface mb-1">{item.title}</p>
-                  {item.description && (
-                    <p className="text-body-sm text-on-surface-variant">{item.description}</p>
-                  )}
-                </article>
+                <StaggerItem key={item.number}>
+                  <article className="gov-card text-center group">
+                    <div className="flex justify-center mb-3">
+                      <span className="w-12 h-12 rounded-xl bg-gov-red/8 flex items-center justify-center group-hover:bg-gov-red/12 transition-colors">
+                        <Icon name={item.icon ?? 'call'} size={22} className="text-gov-red" />
+                      </span>
+                    </div>
+                    <p className="text-headline-lg font-bold text-secondary mb-1">{item.number}</p>
+                    <p className="text-body-sm font-semibold text-on-surface mb-1">{item.title}</p>
+                    {item.description && (
+                      <p className="text-body-sm text-on-surface-variant">{item.description}</p>
+                    )}
+                  </article>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </ContentCard>
 
           <ContentCard title="Other Helplines">
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
               {other.map((item) => (
-                <li key={item.number} className="flex gap-3 text-body-sm border-b border-neutral-100 pb-2">
-                  <span className="font-bold text-gov-link shrink-0 w-14">{item.number}</span>
+                <li key={item.number} className="flex gap-3 text-body-sm border-b border-outline-variant/50 pb-3">
+                  <span className="font-bold text-secondary shrink-0 w-14">{item.number}</span>
                   <span className="text-on-surface">{item.title}</span>
                 </li>
               ))}
@@ -64,7 +67,7 @@ export default async function HelplinePage() {
 
           <p className="text-body-sm text-on-surface-variant">
             For non-emergency queries about this portal, visit the{' '}
-            <Link href="/help" className="text-gov-link hover:underline min-h-0">
+            <Link href="/help" className="text-secondary hover:underline min-h-0 font-medium">
               Help Center
             </Link>
             .

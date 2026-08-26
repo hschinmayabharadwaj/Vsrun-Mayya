@@ -1,21 +1,17 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { outfit } from '@/lib/fonts';
 import './globals.css';
 import { PrototypeBanner } from '@/components/PrototypeBanner';
 import { PortalChrome } from '@/components/PortalChrome';
 import { Footer } from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  weight: ['400', '500', '600', '700'],
-});
+import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 
 export const metadata: Metadata = {
   title: 'Citizen Services Portal — National Portal of India (Demo)',
   description:
     'Access citizen services, track applications, helplines, and grievance redressal. Prototype demonstration portal.',
+  icons: { icon: '/logo.svg' },
 };
 
 export const viewport: Viewport = {
@@ -25,12 +21,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen flex flex-col antialiased bg-white text-on-surface font-body">
-        <PrototypeBanner />
-        <PortalChrome>{children}</PortalChrome>
-        <Footer />
-        <CookieConsent />
+    <html lang="en" className={outfit.variable}>
+      <body className="min-h-screen flex flex-col antialiased bg-background text-on-surface font-body">
+        <SmoothScrollProvider>
+          <PrototypeBanner />
+          <PortalChrome>{children}</PortalChrome>
+          <Footer />
+          <CookieConsent />
+        </SmoothScrollProvider>
       </body>
     </html>
   );

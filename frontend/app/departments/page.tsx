@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { InfoPageLayout, ContentCard } from '@/components/InfoPageLayout';
+import { InfoPageLayout, ContentCard, PageLink } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
 import { apiFetch } from '@/lib/api';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import type { Service } from '@/lib/types';
 
 function groupByDepartment(services: Service[]) {
@@ -36,40 +37,45 @@ export default async function DepartmentsPage() {
       ]}
     >
       {error ? (
-        <div className="p-4 bg-red-50 text-red-800 border border-red-200" role="alert">
+        <div className="p-4 bg-error/5 text-error rounded-xl border border-error/20 text-body-sm" role="alert">
           <p className="font-semibold">Could not load departments</p>
           <p className="text-body-sm mt-1">{error}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {departments.map(([department, services]) => (
-            <article key={department} className="gov-card">
-              <div className="flex items-start gap-3 mb-4">
-                <Icon name="account_balance" size={28} className="text-gov-red shrink-0" />
-                <div>
-                  <h2 className="text-body-lg font-semibold text-on-surface">{department}</h2>
-                  <p className="text-label-sm text-on-surface-variant">
-                    {services.length} service{services.length !== 1 ? 's' : ''} available
-                  </p>
+            <StaggerItem key={department}>
+              <article className="gov-card group">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-gov-red/8 flex items-center justify-center shrink-0 group-hover:bg-gov-red/12 transition-colors">
+                    <Icon name="account_balance" size={24} className="text-gov-red" />
+                  </div>
+                  <div>
+                    <h2 className="text-body-lg font-semibold text-on-surface">{department}</h2>
+                    <p className="text-label-sm text-on-surface-variant">
+                      {services.length} service{services.length !== 1 ? 's' : ''} available
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <ul className="space-y-1 mb-4 text-body-sm text-on-surface-variant">
-                {services.slice(0, 4).map((s) => (
-                  <li key={s.id}>{s.name}</li>
-                ))}
-                {services.length > 4 && (
-                  <li className="text-gov-link">+{services.length - 4} more</li>
-                )}
-              </ul>
-              <Link
-                href={`/services?search=${encodeURIComponent(department.split(' ')[0])}`}
-                className="text-gov-link text-body-sm font-semibold hover:underline min-h-0"
-              >
-                View services →
-              </Link>
-            </article>
+                <ul className="space-y-1 mb-4 text-body-sm text-on-surface-variant">
+                  {services.slice(0, 4).map((s) => (
+                    <li key={s.id}>{s.name}</li>
+                  ))}
+                  {services.length > 4 && (
+                    <li className="text-secondary">+{services.length - 4} more</li>
+                  )}
+                </ul>
+                <Link
+                  href={`/services?search=${encodeURIComponent(department.split(' ')[0])}`}
+                  className="text-secondary text-body-sm font-semibold hover:underline min-h-0 flex items-center gap-1"
+                >
+                  View services
+                  <Icon name="arrow_forward" size={14} />
+                </Link>
+              </article>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       )}
 
       <ContentCard title="Need a specific department?" className="mt-8">
