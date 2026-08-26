@@ -99,12 +99,13 @@ export default function GenericApplyPage() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'New Application' }]} />
+    <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Apply', href: '/apply' }, { label: 'New Application' }]} />
 
+      <div className="max-w-2xl">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-headline-lg text-on-surface">New Application</h1>
-        <Link href="/" className="text-body-sm text-secondary hover:text-secondary-hover transition-colors">
+        <Link href="/" className="text-body-sm text-secondary hover:text-secondary-hover transition-colors flex items-center gap-1 min-h-0">
           <Icon name="arrow_back" size={14} /> Back
         </Link>
       </div>
@@ -219,6 +220,7 @@ export default function GenericApplyPage() {
             </button>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

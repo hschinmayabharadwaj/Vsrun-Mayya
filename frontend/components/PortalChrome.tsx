@@ -1,6 +1,6 @@
 import { Header } from '@/components/Header';
 import { DirectoryNavClient } from '@/components/DirectoryNavClient';
-import { getDirectoryNav, getPortalConfig, type PortalConfig } from '@/lib/portal-api';
+import { getDirectoryNav, getNotices, getPortalConfig, type PortalConfig } from '@/lib/portal-api';
 
 const FALLBACK_CONFIG: PortalConfig = {
   siteName: 'Citizen Services Portal',
@@ -18,16 +18,21 @@ const FALLBACK_CONFIG: PortalConfig = {
 export async function PortalChrome({ children }: { children: React.ReactNode }) {
   let config = FALLBACK_CONFIG;
   let navItems: { label: string; href: string }[] = [];
+  let notices: { id: string; text: string; link: string; linkLabel: string }[] = [];
 
   try {
-    [config, navItems] = await Promise.all([getPortalConfig(), getDirectoryNav()]);
+    [config, navItems, notices] = await Promise.all([
+      getPortalConfig(),
+      getDirectoryNav(),
+      getNotices().catch(() => []),
+    ]);
   } catch {
     // Use fallback when backend is offline
   }
 
   return (
     <>
-      <Header config={config} />
+      <Header config={config} notices={notices} />
       <DirectoryNavClient items={navItems} />
       <main id="main-content" className="flex-1">
         {children}

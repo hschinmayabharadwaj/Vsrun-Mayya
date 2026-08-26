@@ -39,11 +39,11 @@ export default async function HelplinePage() {
                 <StaggerItem key={item.number}>
                   <article className="gov-card text-center group">
                     <div className="flex justify-center mb-3">
-                      <span className="w-12 h-12 rounded-xl bg-gov-red/8 flex items-center justify-center group-hover:bg-gov-red/12 transition-colors">
-                        <Icon name={item.icon ?? 'call'} size={22} className="text-gov-red" />
+                      <span className="w-12 h-12 rounded-xl bg-success/8 flex items-center justify-center group-hover:bg-success/12 transition-colors">
+                        <Icon name={item.icon ?? 'call'} size={22} className="text-success" />
                       </span>
                     </div>
-                    <p className="text-headline-lg font-bold text-secondary mb-1">{item.number}</p>
+                    <p className="text-headline-lg font-bold text-success mb-1">{item.number}</p>
                     <p className="text-body-sm font-semibold text-on-surface mb-1">{item.title}</p>
                     {item.description && (
                       <p className="text-body-sm text-on-surface-variant">{item.description}</p>
