@@ -31,12 +31,12 @@ graph TB
 
     subgraph Backend["Backend — FastAPI (port 4000)"]
         FastAPI["FastAPI App<br/>CORS · Rate Limiting · Validation"]
-        Routers["Routers<br/>services · applications · dashboard<br/>grievances · portal · health"]
+        Routers["Routers<br/>auth · services · applications · dashboard<br/>grievances · portal · health"]
         DataStore["DataStore<br/>Dual-mode: Memory / Firestore"]
     end
 
     subgraph Database["Storage"]
-        Firestore["Cloud Firestore<br/>services · applications<br/>notifications · drafts"]
+        Firestore["Cloud Firestore<br/>citizens · services · applications<br/>notifications · drafts"]
         Memory["In-Memory Store<br/>(default, no setup needed)"]
     end
 
@@ -54,7 +54,7 @@ graph TB
 |-------|------|------|------|
 | **Frontend** | Next.js 15, React 19, Tailwind CSS, Lucide Icons, Framer Motion | 3000 | Citizen UI — home, services, apply, track, dashboard, grievance |
 | **Backend** | FastAPI (Python), Pydantic, Firebase Admin SDK | 4000 | REST API — validation, rate limiting (300 req/min), data access |
-| **Database** | Firebase Firestore (or in-memory fallback) | — | 4 collections: services, applications, notifications, drafts |
+| **Database** | Firebase Firestore (or in-memory fallback) | — | 5 collections: citizens, services, applications, notifications, drafts |
 | **Shared** | TypeScript types (`shared/types.ts`) | — | Type contract between frontend & backend |
 
 ### Application Status Flow
@@ -77,6 +77,7 @@ stateDiagram-v2
 | `POST` | `/api/applications` | Submit application |
 | `GET` | `/api/applications/track/:id` | Track by reference ID |
 | `GET` | `/api/dashboard` | Citizen dashboard |
+| `POST` | `/api/auth/register` | Register/update the authenticated citizen profile |
 | `POST` | `/api/grievances` | File grievance |
 | `GET` | `/api/portal/*` | Portal content (10 endpoints) |
 
