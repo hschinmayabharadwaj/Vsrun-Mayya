@@ -4,6 +4,16 @@ A **separate frontend + backend** citizen services platform built from [Stitch/F
 
 Government-grade trust and structure — faster, cleaner, and architected to scale.
 
+## Built with Codex
+
+The interface and application workflow in this repository were developed and refined with Codex. The standalone `Index (1).html` file is retained as the visual reference used for the civic portal refresh.
+
+## Citizen authentication and Railway deployment
+
+Citizen sign-in uses Firebase Authentication. Enable the Email/Password provider in Firebase Console, copy the Firebase web-app configuration into `frontend/.env.local`, and set `USE_MOCK_DB=false` plus `FIREBASE_PROJECT_ID` for the backend. Authenticated requests send Firebase ID tokens to FastAPI, which verifies them with Firebase Admin SDK before allowing applications, dashboard access, tracking, or grievance submission.
+
+The backend includes `backend/Dockerfile`, `backend/railway.json`, and `backend/.dockerignore` for Railway. In Railway, create a service from this repository, set the service Root Directory to `/backend`, add the backend variables in the Variables tab, and deploy. Set `NEXT_PUBLIC_API_URL` to the generated Railway URL in the frontend environment and set the backend `CORS_ORIGIN` to the deployed frontend origin. Railway should receive the Firebase service-account JSON as the sealed `FIREBASE_SERVICE_ACCOUNT_JSON` variable; do not commit the JSON key.
+
 ## Architecture
 
 ```mermaid
@@ -114,14 +124,28 @@ python -m uvicorn app.main:app --reload --port 4000
 | OTP | `123456` |
 | Track IDs | `RES-2026-8842`, `VEH-2026-1190`, `INC-2026-0001` |
 
-## Firebase setup (optional)
+## Firebase / Firestore setup
 
 ```bash
 cd backend
 cp .env.example .env
-# Set USE_MOCK_DB=false and add service account key
+# Set USE_MOCK_DB=false, FIREBASE_PROJECT_ID, and Firebase Admin credentials
 python -m scripts.seed
 ```
+
+From the repository root, select the Firebase project once and deploy the rules and
+indexes:
+
+```bash
+firebase use --add
+firebase deploy --only firestore
+```
+
+The canonical deployment files are `firestore.rules`, `firestore.indexes.json`, and
+`firebase.json` at the repository root. The mirrored files under `firebase/` are kept
+for compatibility with the earlier folder-based setup. Never commit a Firebase Admin
+service-account JSON key; Railway should receive it through the sealed
+`FIREBASE_SERVICE_ACCOUNT_JSON` variable.
 
 ---
 

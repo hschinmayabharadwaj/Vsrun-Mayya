@@ -46,6 +46,7 @@ python -m scripts.seed
 | GET | `/api/applications/track/{id}` | Track by reference ID |
 | POST | `/api/applications` | Submit application |
 | GET | `/api/dashboard` | Citizen dashboard |
+| POST | `/api/auth/register` | Register/update the authenticated citizen profile |
 
 ## Storage modes
 

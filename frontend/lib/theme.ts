@@ -62,10 +62,10 @@
 // };
 
 // --------------------------------------------------
-// THEME 3: "Soft Citrus" (Warm & Confident)
+// THEME 3: "Civic Blue" (Clear, official, and approachable)
 // --------------------------------------------------
 export const theme = {
-  name: 'Soft Citrus',
+  name: 'Civic Blue',
   colors: {
     primary: '#4A4A4A',
     'primary-light': '#8C8C8C',
@@ -81,10 +81,15 @@ export const theme = {
     'info-light': '#DBEAFE',
     background: '#FAFAFA',
     surface: '#FFFFFF',
-    border: '#F0F0F0',
-    'neutral-text': '#757575',
+    border: '#DCE5EF',
+    'neutral-text': '#5B6B7C',
   },
   gradients: {
+    hero: 'linear-gradient(135deg, #123A63 0%, #1D6FB8 100%)',
+    heroText: 'linear-gradient(135deg, #123A63 0%, #E66A2C 100%)',
+    subtle: 'linear-gradient(to right, #F5F8FC, #EEF5FC)',
+    success: 'linear-gradient(135deg, #16866A 0%, #2AA77F 100%)',
+    card: 'linear-gradient(145deg, #FFFFFF 0%, #F7FAFD 100%)',
     hero: 'linear-gradient(135deg, #FF6D00 0%, #FFAB40 100%)',
     heroText: 'linear-gradient(135deg, #4A4A4A 0%, #FF6D00 100%)',
     subtle: 'linear-gradient(to right, #FAFAFA, #FFF8E1)',

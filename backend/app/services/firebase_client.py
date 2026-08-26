@@ -21,6 +21,11 @@ def get_firestore() -> Any | None:
     if _db is not None:
         return _db
 
+    # Authentication can use Firebase while application data remains in the
+    # in-memory store during local development.
+    if get_settings().use_mock_db:
+        return None
+
     app = get_firebase_app()
     if app is None:
         return None
@@ -43,9 +48,6 @@ def get_firebase_app() -> Any | None:
 
     _initialized = True
     settings = get_settings()
-    if settings.use_mock_db:
-        return None
-
     try:
         import firebase_admin
         from firebase_admin import credentials

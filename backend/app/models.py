@@ -72,7 +72,12 @@ class Citizen(BaseModel):
     id: str
     name: str
     email: str
-    phone: str
+    phone: str = ""
+
+
+class RegisterUserPayload(BaseModel):
+    name: str | None = Field(default=None, max_length=120)
+    phone: str = Field(default="", max_length=30)
 
 
 class Draft(BaseModel):

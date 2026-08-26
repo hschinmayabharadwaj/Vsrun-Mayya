@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
 import { ApplicationCard } from '@/components/ApplicationTimeline';
 import { Icon } from '@/components/Icon';
 import { FadeIn, SlideUp } from '@/components/MotionWrappers';
 import type { Application } from '@/lib/types';
+import { AuthGate } from '@/components/AuthGate';
+import { authApiFetch } from '@/lib/auth-api';
 
-export default function TrackPage() {
+function TrackContent() {
   const [refId, setRefId] = useState('');
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function TrackPage() {
     setError(null);
     setApplication(null);
     try {
-      const data = await apiFetch<Application>(`/api/applications/track/${encodeURIComponent(refId.trim())}`);
+      const data = await authApiFetch<Application>(`/api/applications/track/${encodeURIComponent(refId.trim())}`);
       setApplication(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Application not found');
@@ -91,22 +92,10 @@ export default function TrackPage() {
 
       <FadeIn delay={0.2}>
         <div className="p-4 bg-secondary/5 rounded-xl border border-secondary/10 mb-8">
-          <p className="text-label-md text-on-surface-variant mb-3 flex items-center gap-2">
-            <Icon name="lightbulb" size={16} className="text-warning" />
-            Try these demo IDs:
+          <p className="text-body-sm text-on-surface-variant flex items-start gap-2">
+            <Icon name="lock" size={16} className="text-secondary mt-0.5 shrink-0" />
+            For your privacy, only applications submitted from this citizen account can be viewed.
           </p>
-          <div className="flex flex-wrap gap-2">
-            {['RES-2026-8842', 'VEH-2026-1190', 'INC-2026-0001'].map((id) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setRefId(id)}
-                className="font-mono text-body-sm px-4 py-2 bg-surface border border-outline-variant rounded-full hover:border-secondary hover:bg-secondary/5 text-secondary transition-all min-h-[40px] shadow-soft hover:shadow-glow"
-              >
-                {id}
-              </button>
-            ))}
-          </div>
         </div>
       </FadeIn>
 
@@ -131,4 +120,8 @@ export default function TrackPage() {
       )}
     </div>
   );
+}
+
+export default function TrackPage() {
+  return <AuthGate><TrackContent /></AuthGate>;
 }

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
 import { ApplicationCard } from '@/components/ApplicationTimeline';
 import { Icon } from '@/components/Icon';
-import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import { FadeIn, SlideUp } from '@/components/MotionWrappers';
 import type { Application, Notification } from '@/lib/types';
+import { AuthGate } from '@/components/AuthGate';
+import { authApiFetch } from '@/lib/auth-api';
 
 interface DashboardData {
   citizen: { name: string };
@@ -16,13 +17,13 @@ interface DashboardData {
   unreadCount: number;
 }
 
-export default function DashboardPage() {
+function DashboardContent() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    apiFetch<DashboardData>('/api/dashboard')
+    authApiFetch<DashboardData>('/api/dashboard')
       .then(setData)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -179,17 +180,17 @@ export default function DashboardPage() {
             </section>
           </SlideUp>
 
-          {/* Demo info */}
+          {/* Account note */}
           <FadeIn delay={0.25}>
             <div className="p-4 bg-secondary/5 rounded-2xl border border-secondary/10">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center">
                   <Icon name="science" size={16} className="text-secondary" />
                 </div>
-                <p className="text-label-md text-secondary font-bold">Demo Mode</p>
+                <p className="text-label-md text-secondary font-bold">Citizen account</p>
               </div>
               <p className="text-body-sm text-on-surface-variant">
-                OTP for verification: <strong className="font-mono text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">123456</strong>
+                Your activity is linked to your verified Firebase account.
               </p>
             </div>
           </FadeIn>
@@ -197,4 +198,8 @@ export default function DashboardPage() {
       </div>
     </div>
   );
+}
+
+export default function DashboardPage() {
+  return <AuthGate><DashboardContent /></AuthGate>;
 }

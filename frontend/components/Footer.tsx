@@ -17,7 +17,7 @@ export async function Footer() {
   }
 
   return (
-    <footer className="mt-auto border-t border-outline-variant bg-neutral-50">
+    <footer className="mt-auto border-t border-outline-variant bg-[#edf3f9]">
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
@@ -32,6 +32,10 @@ export async function Footer() {
             </div>
             <p className="text-body-sm text-on-surface-variant leading-relaxed max-w-md">
               {config.department}. {config.prototypeNotice}
+            </p>
+            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-label-sm font-semibold text-[#123A63] shadow-soft">
+              <span className="h-1.5 w-1.5 rounded-full bg-secondary" />
+              Designed and built with Codex
             </p>
             <div className="flex items-center gap-4 mt-4">
               <div className="flex items-center gap-2 text-body-sm text-on-surface-variant">

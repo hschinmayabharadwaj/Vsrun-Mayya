@@ -13,7 +13,7 @@ export function PrototypeBanner() {
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-2 flex items-center justify-center gap-2 flex-wrap">
         <Icon name="info" size={16} className="text-amber-800" />
         <p className="text-label-sm text-amber-900 text-center">
-          <strong>Prototype / Demo</strong> — Not an official Government of India website. All data is synthetic.
+          <strong>Prototype / Demo</strong> — Not an official Government of India website. All data is synthetic. <span className="hidden sm:inline text-amber-800/70">Built with Codex.</span>
         </p>
         <button
           type="button"

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { InfoPageLayout, ContentCard } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
-import { API_URL } from '@/lib/api';
+import { authApiFetch } from '@/lib/auth-api';
 
 interface GrievanceFormProps {
   categories: string[];
@@ -43,14 +43,12 @@ export function GrievanceForm({ categories }: GrievanceFormProps) {
     setError(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/grievances`, {
+      const data = await authApiFetch<GrievanceRecord>('/api/grievances', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || 'Submission failed');
-      setReferenceId(json.data.id);
+      setReferenceId(data.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not submit grievance');
     } finally {
@@ -197,4 +195,8 @@ export function GrievanceForm({ categories }: GrievanceFormProps) {
       </div>
     </InfoPageLayout>
   );
+}
+
+interface GrievanceRecord {
+  id: string;
 }
