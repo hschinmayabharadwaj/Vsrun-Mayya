@@ -5,6 +5,7 @@ import { PortalChrome } from '@/components/PortalChrome';
 import { Footer } from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
+import { AuthProvider } from '@/components/AuthProvider';
 import { Providers } from '@/components/Providers';
 
 export const metadata: Metadata = {
@@ -23,6 +24,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={outfit.variable}>
       <body className="min-h-screen flex flex-col antialiased bg-background text-on-surface font-body">
+        <SmoothScrollProvider>
+          <AuthProvider>
+            <PrototypeBanner />
+            <PortalChrome>{children}</PortalChrome>
+            <Footer />
+            <CookieConsent />
+          </AuthProvider>
+        </SmoothScrollProvider>
         <Providers>
           <SmoothScrollProvider>
             <PortalChrome>{children}</PortalChrome>

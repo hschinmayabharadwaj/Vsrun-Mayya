@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation';
-import { InfoPageLayout, ContentCard } from '@/components/InfoPageLayout';
+import Link from 'next/link';
+import { InfoPageLayout } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
 
 export default function NotFound() {
@@ -16,10 +16,10 @@ export default function NotFound() {
         <p className="text-body-md text-on-surface-variant mb-6 max-w-md mx-auto">
           The page you are looking for does not exist or has been moved.
         </p>
-        <a href="/" className="btn-primary inline-flex items-center gap-2">
+        <Link href="/" className="btn-primary inline-flex items-center gap-2">
           <Icon name="home" size={18} className="text-white/80" />
           Return to Home
-        </a>
+        </Link>
       </div>
     </InfoPageLayout>
   );

@@ -1,5 +1,6 @@
 import { GrievanceForm } from '@/components/GrievanceForm';
 import { getGrievanceCategories } from '@/lib/portal-api';
+import { AuthGate } from '@/components/AuthGate';
 
 export default async function GrievancePage() {
   let categories: string[] = [];
@@ -10,5 +11,5 @@ export default async function GrievancePage() {
     categories = ['Other'];
   }
 
-  return <GrievanceForm categories={categories} />;
+  return <AuthGate title="Sign in to file a grievance"><GrievanceForm categories={categories} /></AuthGate>;
 }

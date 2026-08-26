@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { apiFetch, API_URL } from '@/lib/api';
+import { apiFetch } from '@/lib/api';
+import { authApiFetch } from '@/lib/auth-api';
+import { AuthGate } from '@/components/AuthGate';
 import { Icon } from '@/components/Icon';
 import { FadeIn, SlideUp } from '@/components/MotionWrappers';
 import type { Service, Application } from '@/lib/types';
@@ -11,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const STEPS = ['Applicant Details', 'Address Details', 'Documents', 'Declaration', 'Review'];
 
-export default function ApplyPage() {
+function ApplyServicePage() {
   const params = useParams();
   const slug = params.slug as string;
 
@@ -78,7 +80,7 @@ export default function ApplyPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/api/applications`, {
+      const data = await authApiFetch<Application>('/api/applications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -86,9 +88,7 @@ export default function ApplyPage() {
           formData: form,
         }),
       });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error);
-      setSubmitted(json.data);
+      setSubmitted(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Submission failed');
     } finally {
@@ -420,4 +420,8 @@ export default function ApplyPage() {
       </main>
     </>
   );
+}
+
+export default function ApplyPage() {
+  return <AuthGate title="Sign in to apply for this service"><ApplyServicePage /></AuthGate>;
 }

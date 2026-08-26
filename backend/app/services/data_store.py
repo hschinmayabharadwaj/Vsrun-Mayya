@@ -17,6 +17,7 @@ from app.data.catalog import (
 from app.models import (
     Application,
     ApplicationStatus,
+    Citizen,
     CreateApplicationPayload,
     DashboardData,
     Draft,
@@ -37,6 +38,7 @@ class _MemoryStore:
         self.applications: list[Application] = []
         self.notifications: list[Notification] = []
         self.drafts = list(SEED_DRAFTS)
+        self.citizens: dict[str, Citizen] = {}
         self._seeded = False
 
     def seed(self) -> None:
@@ -208,6 +210,50 @@ class DataStore:
             drafts=drafts,
             unreadCount=sum(1 for n in notifications if not n.read),
         )
+
+    async def upsert_citizen(
+        self,
+        citizen_id: str,
+        name: str,
+        email: str,
+        phone: str = "",
+    ) -> Citizen:
+        """Create or update the portal profile for an authenticated Firebase user."""
+        db = get_firestore()
+        if db is None:
+            existing = _memory.citizens.get(citizen_id)
+            citizen = Citizen(
+                id=citizen_id,
+                name=name or (existing.name if existing else "Citizen"),
+                email=email,
+                phone=phone or (existing.phone if existing else ""),
+            )
+            _memory.citizens[citizen_id] = citizen
+            return citizen
+
+        ref = db.collection(COLLECTIONS["citizens"]).document(citizen_id)
+        snapshot = ref.get()
+        existing = snapshot.to_dict() if snapshot.exists else {}
+        citizen = Citizen(
+            id=citizen_id,
+            name=name or existing.get("name") or "Citizen",
+            email=email,
+            phone=phone or existing.get("phone") or "",
+        )
+        ref.set(citizen.model_dump(), merge=True)
+        return citizen
+
+    async def get_citizen(self, citizen_id: str) -> Citizen | None:
+        db = get_firestore()
+        if db is None:
+            return _memory.citizens.get(citizen_id)
+
+        snapshot = db.collection(COLLECTIONS["citizens"]).document(citizen_id).get()
+        if not snapshot.exists:
+            return None
+        data = snapshot.to_dict()
+        data.pop("id", None)
+        return Citizen(id=snapshot.id, **data)
 
     async def _seed_firestore(self, db) -> None:
         batch = db.batch()

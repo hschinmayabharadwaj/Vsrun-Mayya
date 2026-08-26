@@ -275,6 +275,7 @@ SEED_DRAFTS = [
 ]
 
 COLLECTIONS = {
+    "citizens": "citizens",
     "services": "services",
     "applications": "applications",
     "notifications": "notifications",
