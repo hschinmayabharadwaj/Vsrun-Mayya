@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     use_mock_db: bool = True
     firebase_project_id: str | None = None
     google_application_credentials: str | None = None
+    firebase_service_account_json: str | None = None
 
     @property
     def is_production(self) -> bool:

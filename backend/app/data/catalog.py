@@ -279,4 +279,5 @@ COLLECTIONS = {
     "applications": "applications",
     "notifications": "notifications",
     "drafts": "drafts",
+    "grievances": "grievances",
 }
