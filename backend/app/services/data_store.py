@@ -197,12 +197,12 @@ class DataStore:
         query = db.collection(COLLECTIONS["drafts"]).where("citizenId", "==", citizen_id)
         return [Draft(id=doc.id, **doc.to_dict()) for doc in query.stream()]
 
-    async def get_dashboard(self, citizen_id: str) -> DashboardData:
+    async def get_dashboard(self, citizen_id: str, citizen: Citizen | None = None) -> DashboardData:
         applications = await self.get_applications(citizen_id)
         notifications = await self.get_notifications(citizen_id)
         drafts = await self.get_drafts(citizen_id)
         return DashboardData(
-            citizen=DEMO_CITIZEN,
+            citizen=citizen or DEMO_CITIZEN,
             applications=applications,
             notifications=notifications,
             drafts=drafts,
