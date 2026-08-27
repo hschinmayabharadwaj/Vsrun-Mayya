@@ -6,7 +6,7 @@ Python REST API for the Citizen Services Portal.
 
 ```bash
 cd backend
-python -m venv .venv
+py -m venv .venv
 
 # Windows
 .venv\Scripts\activate
@@ -15,13 +15,13 @@ python -m venv .venv
 source .venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env
+cp .env.aexample .env
 ```
 
 ## Run
 
 ```bash
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 4000
+py -m uvicorn app.main:app --reload --host 0.0.0.0 --port 4000
 ```
 
 - API: http://localhost:4000  
@@ -32,7 +32,7 @@ python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 4000
 
 ```bash
 # Set USE_MOCK_DB=false and configure Firebase in .env first
-python -m scripts.seed
+py -m scripts.seed
 ```
 
 ## Endpoints
