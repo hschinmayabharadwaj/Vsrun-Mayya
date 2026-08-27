@@ -3,10 +3,10 @@ import { outfit } from '@/lib/fonts';
 import './globals.css';
 import { PortalChrome } from '@/components/PortalChrome';
 import { Footer } from '@/components/Footer';
+import { PrototypeBanner } from '@/components/PrototypeBanner';
 import { CookieConsent } from '@/components/CookieConsent';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
-import { AuthProvider } from '@/components/AuthProvider';
-import { Providers } from '@/components/Providers';
+import { AuthProvider } from '@/components/Providers';
 
 export const metadata: Metadata = {
   title: 'Citizen Services Portal — National Portal of India (Demo)',
@@ -32,13 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <CookieConsent />
           </AuthProvider>
         </SmoothScrollProvider>
-        <Providers>
-          <SmoothScrollProvider>
-            <PortalChrome>{children}</PortalChrome>
-            <Footer />
-            <CookieConsent />
-          </SmoothScrollProvider>
-        </Providers>
       </body>
     </html>
   );

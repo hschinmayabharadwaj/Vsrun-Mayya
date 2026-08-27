@@ -82,7 +82,7 @@ export default async function HomePage() {
 
           {/* Quick access cards */}
           <FadeIn delay={0.3}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb- 12 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
               {[
                 { href: '/services', label: 'Services Directory', desc: 'Browse and apply for services', icon: 'apps', color: 'text-info', bg: 'bg-info/8' },
                 { href: '/track', label: 'Track Application', desc: 'Check status by reference ID', icon: 'track_changes', color: 'text-secondary', bg: 'bg-secondary/8' },
@@ -97,35 +97,16 @@ export default async function HomePage() {
                   <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center shrink-0 group-hover:opacity-80 transition-opacity`}>
                     <Icon name={item.icon} size={20} className={item.color} />
                   </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#fff1e8] text-secondary">
-                    <Icon name="apps" size={22} />
+                  <div>
+                    <h2 className="text-body-md font-semibold text-on-surface group-hover:text-secondary transition-colors">
+                      {item.label}
+                    </h2>
+                    <p className="text-label-sm text-on-surface-variant mt-0.5">{item.desc}</p>
                   </div>
-                </div>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  {[
-                    { href: '/services', label: 'Find a service', desc: 'Browse the directory', icon: 'search' },
-                    { href: '/services', label: 'Start an application', desc: 'Choose a service to apply', icon: 'edit_document' },
-                    { href: '/dashboard', label: 'Open my dashboard', desc: 'View your activity', icon: 'dashboard' },
-                    { href: '/helpline', label: 'Get support', desc: 'Important numbers', icon: 'phone_in_talk' },
-                  ].map((item) => (
-                    <Link key={`${item.href}-${item.label}`} href={item.href} className="group flex items-center gap-3 rounded-2xl border border-[#e3ebf3] p-3 hover:border-[#a9cae8] hover:bg-[#f7fbff] min-h-0">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#eaf3fb] text-[#1d6fb8] group-hover:bg-[#dcecf9]">
-                        <Icon name={item.icon} size={19} />
-                      </span>
-                      <span>
-                        <span className="block text-body-sm font-semibold">{item.label}</span>
-                        <span className="block text-label-sm text-[#6b7d90]">{item.desc}</span>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-                <div className="mt-5 flex items-center gap-2 rounded-xl bg-[#f7f9fb] px-3 py-2.5 text-label-sm text-[#6b7d90]">
-                  <Icon name="lock" size={15} className="text-success" />
-                  Designed for clear, secure citizen access
-                </div>
-              </div>
-            </SlideUp>
-          </div>
+                </Link>
+              ))}
+            </div>
+          </FadeIn>
         </div>
       </section>
 

@@ -1,7 +1,3 @@
-import { redirect } from 'next/navigation';
-
-export default function ApplyPage() {
-  redirect('/services');
 'use client';
 
 import { useState } from 'react';

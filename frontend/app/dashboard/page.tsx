@@ -25,7 +25,7 @@ function DashboardContent() {
   useEffect(() => {
     authApiFetch<DashboardData>('/api/dashboard')
       .then(setData)
-      .catch((e) => setError(e.message))
+      .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
