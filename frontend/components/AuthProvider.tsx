@@ -1,3 +1,1 @@
-'use client';
-
-export { AuthProvider, useAuth } from './Providers';
+export { useAuth } from '@/components/Providers';

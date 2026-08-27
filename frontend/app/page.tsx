@@ -8,12 +8,12 @@ import { Icon } from '@/components/Icon';
 import type { Service } from '@/lib/types';
 
 const categories = [
-  { label: 'Identity & Civil', description: 'Certificates, IDs and essential records', icon: 'fingerprint', href: '/services?category=identity_civil' },
-  { label: 'Education & Skills', description: 'Scholarships, learning and employment', icon: 'school', href: '/services?category=education_skills' },
-  { label: 'Health & Welfare', description: 'Healthcare, benefits and social support', icon: 'local_hospital', href: '/services?category=health_welfare' },
-  { label: 'Business & Trade', description: 'Licences, registrations and commerce', icon: 'storefront', href: '/services?category=business_trade' },
-  { label: 'Housing & Land', description: 'Property, residence and local services', icon: 'home', href: '/services?category=housing_land' },
-  { label: 'Help & Grievance', description: 'Find answers or raise a complaint', icon: 'report_problem', href: '/grievance' },
+  { label: 'Identity & Civil', description: 'Certificates, IDs and essential records', icon: 'fingerprint', href: '/services?category=identity_civil', color: 'text-info', bg: 'bg-info/10' },
+  { label: 'Education & Skills', description: 'Scholarships, learning and employment', icon: 'school', href: '/services?category=education_skills', color: 'text-purple-600', bg: 'bg-purple-50' },
+  { label: 'Health & Welfare', description: 'Healthcare, benefits and social support', icon: 'local_hospital', href: '/services?category=health_welfare', color: 'text-success', bg: 'bg-success/10' },
+  { label: 'Business & Trade', description: 'Licences, registrations and commerce', icon: 'storefront', href: '/services?category=business_trade', color: 'text-amber-600', bg: 'bg-amber-50' },
+  { label: 'Housing & Land', description: 'Property, residence and local services', icon: 'home', href: '/services?category=housing_land', color: 'text-error', bg: 'bg-error/10' },
+  { label: 'Help & Grievance', description: 'Find answers or raise a complaint', icon: 'report_problem', href: '/grievance', color: 'text-rose-600', bg: 'bg-rose-50' },
 ];
 
 export default async function HomePage() {
@@ -82,7 +82,7 @@ export default async function HomePage() {
 
           {/* Quick access cards */}
           <FadeIn delay={0.3}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb- 12 mt-4">
               {[
                 { href: '/services', label: 'Services Directory', desc: 'Browse and apply for services', icon: 'apps', color: 'text-info', bg: 'bg-info/8' },
                 { href: '/track', label: 'Track Application', desc: 'Check status by reference ID', icon: 'track_changes', color: 'text-secondary', bg: 'bg-secondary/8' },
@@ -98,10 +98,8 @@ export default async function HomePage() {
                     <Icon name={item.icon} size={20} className={item.color} />
                   </div>
                   <div>
-                    <h2 className="text-body-md font-semibold text-on-surface group-hover:text-secondary transition-colors">
-                      {item.label}
-                    </h2>
-                    <p className="text-label-sm text-on-surface-variant mt-0.5">{item.desc}</p>
+                    <span className="block font-semibold text-on-surface mb-0.5">{item.label}</span>
+                    <span className="block text-body-sm text-on-surface-variant">{item.desc}</span>
                   </div>
                 </Link>
               ))}
@@ -201,7 +199,7 @@ export default async function HomePage() {
             {categories.map((category) => (
               <StaggerItem key={category.label}>
                 <Link href={category.href} className="group flex items-start gap-4 rounded-2xl border border-outline-variant bg-[#fbfdff] p-5 hover:-translate-y-0.5 hover:border-[#a9cae8] hover:shadow-card-hover min-h-0">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#eaf3fb] text-[#1d6fb8] transition-colors group-hover:bg-[#123a63] group-hover:text-white">
+                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${category.bg} ${category.color} transition-colors group-hover:opacity-80`}>
                     <Icon name={category.icon} size={22} />
                   </span>
                   <span>

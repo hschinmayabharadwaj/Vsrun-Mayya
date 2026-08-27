@@ -1,52 +1,40 @@
 'use client';
 
-import React from 'react';
+import { type ReactNode } from 'react';
 import { useAuth } from '@/components/Providers';
-import { Icon } from '@/components/Icon';
-import Link from 'next/link';
 
 interface AuthGateProps {
-  children: React.ReactNode;
+  children: ReactNode;
   title?: string;
-  description?: string;
 }
 
-export function AuthGate({
-  children,
-  title = 'Sign in required',
-  description = 'Please sign in to access this citizen service.',
-}: AuthGateProps) {
-  const { loggedIn, toggle } = useAuth();
+export function AuthGate({ children }: AuthGateProps) {
+  const { user, loading } = useAuth();
 
-  if (loggedIn) {
-    return <>{children}</>;
+  if (loading) {
+    return (
+      <div className="max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop space-y-5">
+        <div className="skeleton h-20 w-96 rounded-xl" />
+        <div className="skeleton h-72 rounded-xl" />
+      </div>
+    );
   }
 
-  return (
-    <div className="max-w-md mx-auto my-16 px-4">
-      <div className="bg-white rounded-2xl border border-outline-variant p-8 text-center shadow-card">
-        <div className="w-16 h-16 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center mx-auto mb-5">
-          <Icon name="lock" size={32} />
-        </div>
-        <h2 className="text-headline-sm font-bold text-on-surface mb-2">{title}</h2>
-        <p className="text-body-sm text-on-surface-variant mb-6">{description}</p>
-
-        <div className="space-y-3">
-          <button
-            type="button"
-            onClick={toggle}
-            className="btn-primary w-full py-3 justify-center text-label-lg font-semibold"
-          >
-            Sign in with Citizen ID / Demo
-          </button>
-          <Link
-            href="/"
-            className="btn-outline w-full py-2.5 justify-center text-body-sm text-on-surface-variant block text-center"
-          >
-            Back to Home
-          </Link>
+  if (!user) {
+    return (
+      <div className="max-w-container-max mx-auto p-margin-desktop">
+        <div className="p-8 bg-surface border border-outline-variant rounded-2xl shadow-card text-center max-w-md mx-auto">
+          <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+            <span className="text-secondary text-2xl font-bold">?</span>
+          </div>
+          <h2 className="text-headline-md text-on-surface mb-2">Sign in required</h2>
+          <p className="text-body-md text-on-surface-variant">
+            Please sign in using the login button in the top-right corner to access this page.
+          </p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <>{children}</>;
 }

@@ -1,13 +1,22 @@
-import { API_URL } from './api';
+import { API_URL } from '@/lib/api';
 
 export async function authApiFetch<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
-  const isBrowser = typeof window !== 'undefined';
-  const token = isBrowser
-    ? localStorage.getItem('demo-token') || localStorage.getItem('citizen-auth-token')
-    : null;
+  let token: string | null = null;
+
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('demo-user');
+      if (stored) {
+        const user = JSON.parse(stored);
+        token = user.uid || null;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -21,11 +30,12 @@ export async function authApiFetch<T>(
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     headers,
+    next: options?.method === 'GET' ? { revalidate: 60 } : undefined,
   });
 
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || (json && json.success === false)) {
-    throw new Error(json.error || json.detail || json.message || 'Request failed');
+  const json = await res.json();
+  if (!res.ok || !json.success) {
+    throw new Error(json.error || 'Request failed');
   }
-  return (json.data !== undefined ? json.data : json) as T;
+  return json.data as T;
 }

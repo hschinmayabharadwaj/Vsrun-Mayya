@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import { outfit } from '@/lib/fonts';
+// @ts-ignore — Next.js loads global CSS at runtime; the editor may not have CSS module declarations.
 import './globals.css';
 import { PortalChrome } from '@/components/PortalChrome';
 import { Footer } from '@/components/Footer';
-import { PrototypeBanner } from '@/components/PrototypeBanner';
 import { CookieConsent } from '@/components/CookieConsent';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { Providers } from '@/components/Providers';
+import { PrototypeBanner } from '@/components/PrototypeBanner';
 
 export const metadata: Metadata = {
   title: 'Citizen Services Portal — National Portal of India (Demo)',
