@@ -41,18 +41,24 @@ const NAV_ITEMS = [
 export function Header({ config, notices = [] }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { loggedIn, toggle } = useAuth();
+  const { user, loggedIn, signInAsDemo, signOut } = useAuth();
   const [query, setQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [lang, setLang] = useState<'EN' | 'HI'>('EN');
   const [catOpen, setCatOpen] = useState(false);
   const [selectedCats, setSelectedCats] = useState<Set<string>>(new Set(['all']));
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const catRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (catRef.current && !catRef.current.contains(e.target as Node)) {
         setCatOpen(false);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClick);
@@ -82,12 +88,24 @@ export function Header({ config, notices = [] }: HeaderProps) {
     router.push(`/services?${params.toString()}`);
   };
 
-  const handleLoginClick = () => {
-    if (!loggedIn) toggle();
+  const handleProfileClick = () => {
+    if (loggedIn) {
+      router.push('/dashboard');
+    } else {
+      setDropdownOpen(!dropdownOpen);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    await signInAsDemo();
+    setDropdownOpen(false);
     router.push('/dashboard');
   };
 
-  const selectedLabel = selectedCats.has('all') ? 'All' : `${selectedCats.size} selected`;
+  const handleLogout = async () => {
+    await signOut();
+    router.push('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-outline-variant/50">
@@ -100,9 +118,19 @@ export function Header({ config, notices = [] }: HeaderProps) {
 
           {notices.length > 0 && (
             <div className="flex-1 mx-4 overflow-hidden">
-              <div className="animate-marquee whitespace-nowrap">
+              <div className="animate-marquee whitespace-nowrap flex">
                 {notices.map((n, i) => (
-                  <span key={n.id} className="inline-flex items-center gap-2 mx-8">
+                  <span key={`a-${n.id}`} className="inline-flex items-center gap-2 mx-8 shrink-0">
+                    <Icon name="info" size={14} className="text-info shrink-0" />
+                    <span className="text-on-surface">{n.text}</span>
+                    <Link href={n.link} className="text-secondary font-semibold hover:underline min-h-0">
+                      {n.linkLabel} →
+                    </Link>
+                    {i < notices.length - 1 && <span className="text-outline-variant mx-4">|</span>}
+                  </span>
+                ))}
+                {notices.map((n, i) => (
+                  <span key={`b-${n.id}`} className="inline-flex items-center gap-2 mx-8 shrink-0">
                     <Icon name="info" size={14} className="text-info shrink-0" />
                     <span className="text-on-surface">{n.text}</span>
                     <Link href={n.link} className="text-secondary font-semibold hover:underline min-h-0">
@@ -133,6 +161,7 @@ export function Header({ config, notices = [] }: HeaderProps) {
                 </button>
               ))}
             </div>
+            <span className="text-outline-variant">|</span>
             <AccessibilityMenu />
           </div>
         </div>
@@ -142,9 +171,10 @@ export function Header({ config, notices = [] }: HeaderProps) {
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-3">
         <div className="flex items-center gap-4">
           {/* Brand: emblem | logo | name */}
-          <Link href="/" className="flex items-center gap-2 shrink-0 min-h-0 group">
+          <Link href="/" className="flex items-center gap-1 shrink-0 min-h-0 group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/Emblem_of_India.svg" alt="National Emblem" className="w-9 h-9 md:w-10 md:h-10" />
+            <span className="text-outline-variant text-lg font-light">|</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.webp" alt="Portal Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-lg" />
             <div className="hidden sm:block">
@@ -158,9 +188,9 @@ export function Header({ config, notices = [] }: HeaderProps) {
             <FloatingPillNavigation items={NAV_ITEMS} />
           </div>
 
-          {/* Right side: search + login */}
+          {/* Right side: search + profile */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Search bar: input left, chevron right, dropdown below */}
+            {/* Search bar */}
             <div className="hidden md:block relative" ref={catRef}>
               <form onSubmit={handleSearch} className="flex items-center border border-outline-variant rounded-xl bg-white overflow-visible">
                 <Icon name="search" size={16} className="ml-3 text-on-surface-variant shrink-0" />
@@ -183,7 +213,6 @@ export function Header({ config, notices = [] }: HeaderProps) {
                 </button>
               </form>
 
-              {/* Dropdown below search bar */}
               <AnimatePresence>
                 {catOpen && (
                   <motion.div
@@ -212,19 +241,96 @@ export function Header({ config, notices = [] }: HeaderProps) {
               </AnimatePresence>
             </div>
 
-            {/* Login icon */}
-            <button
-              type="button"
-              onClick={handleLoginClick}
-              className="p-2 rounded-xl hover:bg-neutral-100 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
-              aria-label={loggedIn ? 'Go to dashboard' : 'Login'}
-            >
-              {loggedIn ? (
-                <Icon name="person" size={20} className="text-secondary" />
-              ) : (
-                <Icon name="login" size={20} className="text-on-surface-variant" />
-              )}
-            </button>
+            {/* Profile / Login */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={handleProfileClick}
+                className={clsx(
+                  'flex items-center gap-2 p-1.5 rounded-xl hover:bg-neutral-100 transition-colors min-h-[40px]',
+                  loggedIn ? '' : 'min-w-[40px] justify-center'
+                )}
+                aria-label={loggedIn ? 'Go to dashboard' : 'Login'}
+              >
+                {loggedIn ? (
+                  <>
+                    <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-sm font-bold shrink-0">
+                      {user?.displayName?.[0] || 'C'}
+                    </div>
+                    <span className="hidden lg:block text-body-sm font-medium text-on-surface max-w-[100px] truncate">
+                      {user?.displayName || 'Citizen'}
+                    </span>
+                  </>
+                ) : (
+                  <Icon name="person" size={20} className="text-on-surface-variant" />
+                )}
+              </button>
+
+              <AnimatePresence>
+                {dropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute top-full right-0 mt-2 w-64 bg-white border border-outline-variant rounded-2xl shadow-elevated z-50 p-2"
+                  >
+                    {loggedIn ? (
+                      <>
+                        <div className="px-3 py-2 border-b border-outline-variant/50 mb-1">
+                          <p className="text-body-sm font-semibold text-on-surface truncate">{user?.displayName}</p>
+                          <p className="text-label-sm text-on-surface-variant truncate">{user?.email}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { router.push('/dashboard'); setDropdownOpen(false); }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-body-sm text-on-surface hover:bg-neutral-50 rounded-xl transition-colors"
+                        >
+                          <Icon name="dashboard" size={18} />
+                          My Dashboard
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-body-sm text-error hover:bg-error/5 rounded-xl transition-colors"
+                        >
+                          <Icon name="log_out" size={18} />
+                          Sign Out
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => { router.push('/dashboard'); setDropdownOpen(false); }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-body-sm text-on-surface hover:bg-neutral-50 rounded-xl transition-colors font-medium"
+                        >
+                          <Icon name="login" size={18} className="text-secondary" />
+                          Login / Register
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDemoLogin}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-body-sm text-secondary hover:bg-secondary/5 rounded-xl transition-colors font-medium"
+                        >
+                          <Icon name="science" size={18} />
+                          Try Demo Account
+                        </button>
+                        <div className="border-t border-outline-variant/50 my-1" />
+                        <button
+                          type="button"
+                          onClick={() => { setInfoOpen(true); setDropdownOpen(false); }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-body-sm text-on-surface-variant hover:bg-neutral-50 rounded-xl transition-colors"
+                        >
+                          <Icon name="info" size={18} />
+                          About this portal
+                        </button>
+                      </>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Mobile menu toggle */}
             <button
@@ -238,6 +344,94 @@ export function Header({ config, notices = [] }: HeaderProps) {
           </div>
         </div>
       </div>
+
+      {/* Info Modal */}
+      <AnimatePresence>
+        {infoOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+            onClick={() => setInfoOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white rounded-2xl shadow-elevated max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setInfoOpen(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-neutral-100 transition-colors"
+                aria-label="Close"
+              >
+                <Icon name="close" size={20} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/Emblem_of_India.svg" alt="" className="w-10 h-10" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.webp" alt="" className="w-10 h-10 rounded-lg" />
+              </div>
+              <h2 className="text-headline-md text-on-surface mb-2">Citizen Services Portal</h2>
+              <p className="text-body-sm text-on-surface-variant mb-4">
+                A unified digital gateway to access government services across India — certificates, licenses, welfare schemes, and more.
+              </p>
+
+              <div className="space-y-3 mb-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Icon name="dashboard" size={16} className="text-info" />
+                  </div>
+                  <div>
+                    <p className="text-body-sm font-semibold text-on-surface">My Dashboard</p>
+                    <p className="text-label-sm text-on-surface-variant">Track all your applications, drafts, and notifications in one place.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Icon name="task" size={16} className="text-success" />
+                  </div>
+                  <div>
+                    <p className="text-body-sm font-semibold text-on-surface">Apply for Services</p>
+                    <p className="text-label-sm text-on-surface-variant">Browse the directory and submit applications online — identity, education, health, business, and housing.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Icon name="track_changes" size={16} className="text-warning" />
+                  </div>
+                  <div>
+                    <p className="text-body-sm font-semibold text-on-surface">Track Application</p>
+                    <p className="text-label-sm text-on-surface-variant">Enter your reference ID to check real-time status of any submitted application.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-error/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Icon name="support_agent" size={16} className="text-error" />
+                  </div>
+                  <div>
+                    <p className="text-body-sm font-semibold text-on-surface">Grievance & Helplines</p>
+                    <p className="text-label-sm text-on-surface-variant">File grievances and access emergency and toll-free helpline numbers.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200/60 rounded-xl p-3 flex items-start gap-2">
+                <Icon name="warning" size={16} className="text-amber-800 shrink-0 mt-0.5" />
+                <p className="text-label-sm text-amber-900">
+                  This is a <strong>prototype / demo</strong> portal. All data is synthetic and for demonstration purposes only. Not an official Government of India website.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile menu */}
       <AnimatePresence>
@@ -253,8 +447,14 @@ export function Header({ config, notices = [] }: HeaderProps) {
               {NAV_ITEMS.map(({ href, label }) => (
                 <Link
                   key={href}
-                  href={href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  href={href === '/dashboard' && !loggedIn ? '#' : href}
+                  onClick={(e) => {
+                    if (href === '/dashboard' && !loggedIn) {
+                      e.preventDefault();
+                      router.push('/dashboard');
+                    }
+                    setMobileMenuOpen(false);
+                  }}
                   className={clsx(
                     'flex items-center gap-3 px-4 py-3 text-body-sm font-medium rounded-lg min-h-[44px] transition-all',
                     pathname === href

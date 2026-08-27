@@ -4,7 +4,7 @@
   "description": "Citizen Services Portal — Stitch-designed frontend",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build --turbo",
     "start": "next start",
     "lint": "next lint",

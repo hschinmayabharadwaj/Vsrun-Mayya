@@ -1,61 +1,138 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ApplicationCard } from '@/components/ApplicationTimeline';
 import { Icon } from '@/components/Icon';
 import { FadeIn, SlideUp } from '@/components/MotionWrappers';
 import type { Application, Notification } from '@/lib/types';
-import { AuthGate } from '@/components/AuthGate';
-import { authApiFetch } from '@/lib/auth-api';
+import { useAuth } from '@/components/Providers';
 
-interface DashboardData {
-  citizen: { name: string };
-  applications: Application[];
-  notifications: Notification[];
-  drafts: { id: string; serviceName: string; lastSaved: string }[];
-  unreadCount: number;
+const DEMO_APPLICATIONS: Application[] = [
+  { id: 'APP-2026-001', serviceId: 'aadhaar-update', serviceName: 'Aadhaar Card Update', citizenId: 'demo-uid-001', citizenName: 'Demo Citizen', status: 'approved', submittedAt: '2026-08-20T10:30:00Z', updatedAt: '2026-08-22T14:00:00Z', formData: {}, timeline: [
+    { stage: 'submitted', label: 'Submitted', completed: true, active: false, timestamp: '2026-08-20T10:30:00Z' },
+    { stage: 'under_review', label: 'Under Review', completed: true, active: false, timestamp: '2026-08-21T09:00:00Z' },
+    { stage: 'approved', label: 'Approved', completed: true, active: true, timestamp: '2026-08-22T14:00:00Z' },
+  ] },
+  { id: 'APP-2026-002', serviceId: 'income-cert', serviceName: 'Income Certificate', citizenId: 'demo-uid-001', citizenName: 'Demo Citizen', status: 'under_review', submittedAt: '2026-08-24T09:15:00Z', updatedAt: '2026-08-25T11:00:00Z', formData: {}, timeline: [
+    { stage: 'submitted', label: 'Submitted', completed: true, active: false, timestamp: '2026-08-24T09:15:00Z' },
+    { stage: 'under_review', label: 'Under Review', completed: false, active: true, timestamp: '2026-08-25T11:00:00Z' },
+  ] },
+  { id: 'APP-2026-003', serviceId: 'caste-cert', serviceName: 'Caste Certificate', citizenId: 'demo-uid-001', citizenName: 'Demo Citizen', status: 'submitted', submittedAt: '2026-08-26T16:45:00Z', updatedAt: '2026-08-26T16:45:00Z', formData: {}, timeline: [
+    { stage: 'submitted', label: 'Submitted', completed: true, active: true, timestamp: '2026-08-26T16:45:00Z' },
+  ] },
+];
+
+const DEMO_NOTIFICATIONS: Notification[] = [
+  { id: 'n1', citizenId: 'demo-uid-001', message: 'Your Aadhaar Card Update application has been approved.', createdAt: '2026-08-22T14:00:00Z', read: true },
+  { id: 'n2', citizenId: 'demo-uid-001', message: 'Income Certificate is now under review by the issuing authority.', createdAt: '2026-08-25T11:00:00Z', read: false },
+  { id: 'n3', citizenId: 'demo-uid-001', message: 'Caste Certificate application received. Processing will begin shortly.', createdAt: '2026-08-26T16:45:00Z', read: false },
+];
+
+const DEMO_DRAFTS = [
+  { id: 'd1', serviceName: 'Domicile Certificate', lastSaved: '2026-08-25T18:30:00Z' },
+  { id: 'd2', serviceName: 'PAN Card Application', lastSaved: '2026-08-23T12:00:00Z' },
+];
+
+function LoginModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
+  const { signIn, signInAsDemo } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signIn(email, password);
+    onClose();
+    router.refresh();
+  };
+
+  const handleDemo = async () => {
+    await signInAsDemo();
+    onClose();
+    router.refresh();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-2xl shadow-elevated w-full max-w-md p-6 relative">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-neutral-100 transition-colors"
+          aria-label="Close"
+        >
+          <Icon name="close" size={20} />
+        </button>
+
+        <div className="flex items-center gap-3 mb-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/Emblem_of_India.svg" alt="" className="w-8 h-8" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.webp" alt="" className="w-8 h-8 rounded-lg" />
+          <span className="text-headline-sm text-on-surface">Sign In</span>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3 mb-4">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email address"
+            className="w-full px-3 py-2.5 text-body-sm border border-outline-variant rounded-xl min-h-[44px]"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full px-3 py-2.5 text-body-sm border border-outline-variant rounded-xl min-h-[44px]"
+          />
+          <button type="submit" className="btn-primary w-full py-2.5 min-h-[44px] text-body-sm font-semibold rounded-xl">
+            Sign In
+          </button>
+        </form>
+
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex-1 h-px bg-outline-variant" />
+          <span className="text-label-sm text-on-surface-variant">or</span>
+          <div className="flex-1 h-px bg-outline-variant" />
+        </div>
+
+        <button
+          type="button"
+          onClick={handleDemo}
+          className="w-full py-2.5 min-h-[44px] text-body-sm font-semibold rounded-xl border-2 border-dashed border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors"
+        >
+          Try Demo Account
+        </button>
+        <p className="text-label-sm text-on-surface-variant text-center mt-3">
+          Experience the portal with sample data — no registration needed
+        </p>
+      </div>
+    </div>
+  );
 }
 
-function DashboardContent() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, loggedIn, signOut } = useAuth();
+  const [loginModalOpen, setLoginModalOpen] = useState(true);
 
-  useEffect(() => {
-    authApiFetch<DashboardData>('/api/dashboard')
-      .then(setData)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (!loggedIn) {
     return (
-      <div className="max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop space-y-5">
-        <div className="skeleton h-20 w-96 rounded-xl" />
-        <div className="skeleton h-72 rounded-xl" />
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="max-w-container-max mx-auto p-margin-desktop">
-        <div className="p-5 bg-error/5 text-error rounded-xl border border-error/20 flex items-start gap-3" role="alert">
-          <div className="w-10 h-10 rounded-xl bg-error/10 flex items-center justify-center shrink-0">
-            <Icon name="error" size={20} className="text-error" />
-          </div>
-          <div>
-            <p className="font-semibold">Could not load dashboard</p>
-            <p className="text-body-sm mt-1">{error}</p>
-            <button type="button" onClick={() => window.location.reload()} className="mt-3 btn-primary px-5 py-2 min-h-[40px]">
-              Retry
-            </button>
-          </div>
+      <>
+        {loginModalOpen && <LoginModal onClose={() => { setLoginModalOpen(false); router.push('/'); }} />}
+        <div className="max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop">
+          <div className="skeleton h-20 w-96 rounded-xl" />
         </div>
-      </div>
+      </>
     );
   }
+
+  const firstName = (user?.displayName || 'Citizen').split(' ')[0];
+  const unreadCount = DEMO_NOTIFICATIONS.filter((n) => !n.read).length;
 
   const formatRelative = (iso: string) => {
     const diff = Date.now() - new Date(iso).getTime();
@@ -66,20 +143,16 @@ function DashboardContent() {
     return `${days}d ago`;
   };
 
-  const firstName = data.citizen.name.split(' ')[0];
-
   return (
     <div className="max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop">
       {/* Welcome header */}
       <FadeIn>
         <header className="mb-8">
           <div className="flex items-center gap-4 mb-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/Emblem_of_India.svg" alt="" className="w-10 h-10 shrink-0" />
-            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center text-white text-xl font-bold shadow-soft">
+            <div className="w-14 h-14 rounded-full gradient-primary flex items-center justify-center text-white text-2xl font-bold shadow-soft shrink-0">
               {firstName[0]}
             </div>
-            <div>
+            <div className="flex-1">
               <h1 className="text-display-lg text-on-surface leading-tight">
                 Welcome back, <span className="gradient-text-accent">{firstName}</span>
               </h1>
@@ -87,6 +160,14 @@ function DashboardContent() {
                 Here is an overview of your active applications and documents.
               </p>
             </div>
+            <button
+              type="button"
+              onClick={async () => { await signOut(); router.push('/'); }}
+              className="flex items-center gap-2 px-4 py-2 text-body-sm font-medium text-error border border-error/30 rounded-xl hover:bg-error/5 transition-colors shrink-0 min-h-[40px]"
+            >
+              <Icon name="log_out" size={18} />
+              Sign Out
+            </button>
           </div>
         </header>
       </FadeIn>
@@ -109,7 +190,7 @@ function DashboardContent() {
                 </Link>
               </div>
               <div className="p-5 flex flex-col gap-4">
-                {data.applications.map((app) => (
+                {DEMO_APPLICATIONS.map((app) => (
                   <ApplicationCard key={app.id} application={app} />
                 ))}
               </div>
@@ -128,7 +209,7 @@ function DashboardContent() {
                 </h2>
               </div>
               <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {data.drafts.map((draft) => (
+                {DEMO_DRAFTS.map((draft) => (
                   <div key={draft.id} className="gov-card min-h-[120px] flex flex-col justify-between cursor-pointer group">
                     <div>
                       <h3 className="text-body-md font-semibold text-on-surface">{draft.serviceName}</h3>
@@ -159,14 +240,14 @@ function DashboardContent() {
                   </div>
                   Notifications
                 </h2>
-                {data.unreadCount > 0 && (
+                {unreadCount > 0 && (
                   <span className="bg-error text-white text-label-sm px-2.5 py-0.5 rounded-full font-bold animate-pulse">
-                    {data.unreadCount}
+                    {unreadCount}
                   </span>
                 )}
               </div>
               <ul className="divide-y divide-outline-variant/50">
-                {data.notifications.map((n) => (
+                {DEMO_NOTIFICATIONS.map((n) => (
                   <li key={n.id} className={`px-5 py-3.5 flex items-start gap-3 transition-colors hover:bg-neutral-50 ${n.read ? 'opacity-60' : ''}`}>
                     {!n.read && <div className="w-2 h-2 rounded-full bg-secondary mt-2 shrink-0 pulse-dot" />}
                     {n.read && <div className="w-2 shrink-0" />}
@@ -185,12 +266,12 @@ function DashboardContent() {
             <div className="p-4 bg-secondary/5 rounded-2xl border border-secondary/10">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center">
-                  <Icon name="science" size={16} className="text-secondary" />
+                  <Icon name="info" size={16} className="text-secondary" />
                 </div>
-                <p className="text-label-md text-secondary font-bold">Citizen account</p>
+                <p className="text-label-md text-secondary font-bold">Demo Mode</p>
               </div>
               <p className="text-body-sm text-on-surface-variant">
-                Your activity is linked to your verified Firebase account.
+                You are viewing the dashboard with sample data. All information shown is for demonstration purposes.
               </p>
             </div>
           </FadeIn>
@@ -198,8 +279,4 @@ function DashboardContent() {
       </div>
     </div>
   );
-}
-
-export default function DashboardPage() {
-  return <AuthGate><DashboardContent /></AuthGate>;
 }

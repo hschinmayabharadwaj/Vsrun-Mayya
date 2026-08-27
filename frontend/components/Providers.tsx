@@ -1,45 +1,77 @@
 'use client';
 
-import { ClerkProvider as RawClerkProvider } from '@clerk/nextjs';
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
 
-// Simple auth context for demo mode (works without Clerk keys)
-interface AuthCtx {
-  loggedIn: boolean;
-  toggle: () => void;
+interface User {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
 }
 
-const AuthContext = createContext<AuthCtx>({ loggedIn: false, toggle: () => {} });
+interface AuthCtx {
+  user: User | null;
+  loggedIn: boolean;
+  loading: boolean;
+  signIn: (email?: string, password?: string) => Promise<void>;
+  signInAsDemo: () => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthCtx>({
+  user: null,
+  loggedIn: false,
+  loading: true,
+  signIn: async () => {},
+  signInAsDemo: async () => {},
+  signOut: async () => {},
+});
+
 export const useAuth = () => useContext(AuthContext);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [loggedIn, setLoggedIn] = useState(false);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setLoggedIn(localStorage.getItem('demo-auth') === 'true');
+    const stored = localStorage.getItem('demo-user');
+    if (stored) {
+      try { setUser(JSON.parse(stored)); } catch { localStorage.removeItem('demo-user'); }
+    }
+    setLoading(false);
   }, []);
-  const toggle = () => {
-    const next = !loggedIn;
-    setLoggedIn(next);
-    localStorage.setItem('demo-auth', String(next));
+
+  const signIn = async (email?: string, _password?: string) => {
+    const demo: User = {
+      uid: 'demo-uid-001',
+      displayName: email?.split('@')[0] || 'Citizen',
+      email: email || 'citizen@citizen.gov.in',
+    };
+    localStorage.setItem('demo-user', JSON.stringify(demo));
+    setUser(demo);
   };
-  return <AuthContext.Provider value={{ loggedIn, toggle }}>{children}</AuthContext.Provider>;
+
+  const signInAsDemo = async () => {
+    const demo: User = {
+      uid: 'demo-uid-001',
+      displayName: 'Demo Citizen',
+      email: 'demo@citizen.gov.in',
+    };
+    localStorage.setItem('demo-user', JSON.stringify(demo));
+    setUser(demo);
+  };
+
+  const signOut = async () => {
+    localStorage.removeItem('demo-user');
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loggedIn: !!user, loading, signIn, signInAsDemo, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-// Clerk provider wraps the app when CLERK_PUBLISHABLE_KEY is set
-export function Providers({ children }: { children: React.ReactNode }) {
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) return <AuthProvider>{children}</AuthProvider>;
-
-  if (clerkKey) {
-    return (
-      <RawClerkProvider publishableKey={clerkKey}>
-        <AuthProvider>{children}</AuthProvider>
-      </RawClerkProvider>
-    );
-  }
-
+export function Providers({ children }: { children: ReactNode }) {
   return <AuthProvider>{children}</AuthProvider>;
 }
