@@ -65,6 +65,7 @@ import {
   Eye,
   Volume2,
   MousePointer,
+  LogOut,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -114,6 +115,8 @@ const iconMap: Record<string, LucideIcon> = {
   business: Building2,
   flag: Flag,
   report_problem: AlertTriangle,
+  warning: AlertTriangle,
+  log_out: LogOut,
   fingerprint: Fingerprint,
   school: GraduationCap,
   local_hospital: Hospital,

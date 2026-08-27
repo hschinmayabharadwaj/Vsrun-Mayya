@@ -15,6 +15,13 @@ const FALLBACK_CONFIG: PortalConfig = {
   searchCategories: [{ value: 'all', label: 'All Categories' }],
 };
 
+const FALLBACK_NOTICES = [
+  { id: '1', text: 'System maintenance scheduled for Saturday 2:00 AM – 4:00 AM IST', link: '/help', linkLabel: 'Learn more' },
+  { id: '2', text: 'Aadhaar enrollment centers now open on Sundays in select cities', link: '/services?category=identity_civil', linkLabel: 'Find centers' },
+  { id: '3', text: 'Income Certificate processing time reduced to 3 working days', link: '/services', linkLabel: 'Apply now' },
+  { id: '4', text: 'New grievance redressal portal launched for faster complaint resolution', link: '/grievance', linkLabel: 'File grievance' },
+];
+
 export async function PortalChrome({ children }: { children: React.ReactNode }) {
   let config = FALLBACK_CONFIG;
   let navItems: { label: string; href: string }[] = [];
@@ -29,6 +36,9 @@ export async function PortalChrome({ children }: { children: React.ReactNode }) 
   } catch {
     // Use fallback when backend is offline
   }
+
+  if (notices.length === 0) notices = FALLBACK_NOTICES;
+  else if (notices.length < 4) notices = [...notices, ...FALLBACK_NOTICES.slice(notices.length)];
 
   return (
     <>

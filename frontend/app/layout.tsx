@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import { outfit } from '@/lib/fonts';
+// @ts-ignore — Next.js loads global CSS at runtime; the editor may not have CSS module declarations.
 import './globals.css';
 import { PortalChrome } from '@/components/PortalChrome';
 import { Footer } from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
-import { AuthProvider } from '@/components/AuthProvider';
 import { Providers } from '@/components/Providers';
+import { PrototypeBanner } from '@/components/PrototypeBanner';
 
 export const metadata: Metadata = {
   title: 'Citizen Services Portal — National Portal of India (Demo)',
@@ -24,16 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={outfit.variable}>
       <body className="min-h-screen flex flex-col antialiased bg-background text-on-surface font-body">
-        <SmoothScrollProvider>
-          <AuthProvider>
-            <PrototypeBanner />
-            <PortalChrome>{children}</PortalChrome>
-            <Footer />
-            <CookieConsent />
-          </AuthProvider>
-        </SmoothScrollProvider>
         <Providers>
           <SmoothScrollProvider>
+            <PrototypeBanner />
             <PortalChrome>{children}</PortalChrome>
             <Footer />
             <CookieConsent />

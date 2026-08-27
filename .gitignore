@@ -76,3 +76,8 @@ ui-debug.log
 # =================>
 *.pem
 *.key
+
+# ===========================
+# Firebase admin SDK service account keys
+# ===========================
+*.json
