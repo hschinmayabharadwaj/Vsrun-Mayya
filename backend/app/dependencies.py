@@ -1,10 +1,15 @@
 import json
+import os
 from typing import Any
 from urllib.parse import unquote
 
 from fastapi import Cookie, Header, HTTPException, status
 
-from app.services.firebase_client import verify_id_token
+from app.services.firebase_client import get_firebase_app, verify_id_token
+
+
+def _is_demo_token(token: str) -> bool:
+    return not token.startswith("eyJ")  # Firebase JWTs always start with "eyJ"
 
 
 def get_current_user(
@@ -30,6 +35,10 @@ def get_current_user(
     token = authorization.removeprefix("Bearer ").strip()
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication token.")
+
+    # Demo mode: accept non-JWT tokens directly as uid
+    if _is_demo_token(token) or get_firebase_app() is None:
+        return {"uid": token, "email": "demo@citizen.gov.in", "name": "Demo Citizen"}
 
     try:
         return verify_id_token(token)

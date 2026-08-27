@@ -6,7 +6,7 @@ import { Footer } from '@/components/Footer';
 import { PrototypeBanner } from '@/components/PrototypeBanner';
 import { CookieConsent } from '@/components/CookieConsent';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
-import { AuthProvider } from '@/components/Providers';
+import { Providers } from '@/components/Providers';
 
 export const metadata: Metadata = {
   title: 'Citizen Services Portal — National Portal of India (Demo)',
@@ -24,14 +24,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={outfit.variable}>
       <body className="min-h-screen flex flex-col antialiased bg-background text-on-surface font-body">
-        <SmoothScrollProvider>
-          <AuthProvider>
+        <Providers>
+          <SmoothScrollProvider>
             <PrototypeBanner />
             <PortalChrome>{children}</PortalChrome>
             <Footer />
             <CookieConsent />
-          </AuthProvider>
-        </SmoothScrollProvider>
+          </SmoothScrollProvider>
+        </Providers>
       </body>
     </html>
   );
