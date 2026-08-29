@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { InfoPageLayout, ContentCard, PageLink } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
 import { getFaqs, getPortalConfig } from '@/lib/portal-api';
-import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import { StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 export default async function HelpPage() {
   let faqs: Awaited<ReturnType<typeof getFaqs>> = [];

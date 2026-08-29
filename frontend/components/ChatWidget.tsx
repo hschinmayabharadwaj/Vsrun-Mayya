@@ -114,7 +114,7 @@ export function ChatWidget() {
               {messages.length === 0 && (
                 <div className="space-y-3">
                   <p className="max-w-[85%] rounded-xl border border-outline-variant bg-surface px-3 py-2 text-body-sm text-on-surface">
-                    Hello! I'm the Citizen Services assistant. How can I help you today?
+                    Hello! I&apos;m the Citizen Services assistant. How can I help you today?
                   </p>
                 </div>
               )}

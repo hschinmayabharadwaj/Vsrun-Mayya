@@ -18,7 +18,7 @@ function getCategoryColor(category: string) {
   return CATEGORY_COLORS[category] ?? { bg: 'bg-secondary/8', icon: 'text-secondary' };
 }
 
-export function ServiceCard({ service, compact = false }: { service: Service; compact?: boolean }) {
+export function ServiceCard({ service }: { service: Service }) {
   const catColor = getCategoryColor(service.category);
 
   return (

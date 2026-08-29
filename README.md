@@ -150,4 +150,4 @@ service-account JSON key; Railway should receive it through the sealed
 
 ---
 
-**Prototype / Demo — Not an official Government platform**
+

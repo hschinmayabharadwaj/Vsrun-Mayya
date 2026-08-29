@@ -44,7 +44,6 @@ import {
   Hospital,
   Store,
   Badge,
-  Wallet,
   Baby,
   Car,
   Heart,

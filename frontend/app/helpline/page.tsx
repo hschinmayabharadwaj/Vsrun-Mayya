@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getHelplines } from '@/lib/portal-api';
 import { InfoPageLayout, ContentCard } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
-import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import { StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 
 export default async function HelplinePage() {
   let emergency: Awaited<ReturnType<typeof getHelplines>>['emergency'] = [];
