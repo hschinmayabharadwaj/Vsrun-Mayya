@@ -75,6 +75,23 @@ class Citizen(BaseModel):
     phone: str = ""
 
 
+class ChatMessage(BaseModel):
+    message: str = Field(..., min_length=1, max_length=500)
+    history: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class ChatLink(BaseModel):
+    label: str
+    href: str
+
+
+class ChatReply(BaseModel):
+    answer: str
+    intent: str
+    matches: list[str] | None = None
+    links: list[ChatLink] | None = None
+
+
 class RegisterUserPayload(BaseModel):
     name: str | None = Field(default=None, max_length=120)
     phone: str = Field(default="", max_length=30)

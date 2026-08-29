@@ -241,3 +241,25 @@ textarea:focus {
 .a11y-reduce-motion .animate-marquee {
   animation: none !important;
 }
+
+/* Dark Mode — invert the whole site */
+.a11y-dark-mode {
+  filter: invert(0.92) hue-rotate(180deg);
+  background: #111827;
+}
+
+.a11y-dark-mode img:not([src*="Emblem"]),
+.a11y-dark-mode video,
+.a11y-dark-mode .gradient-primary,
+.a11y-dark-mode .gradient-accent,
+.a11y-dark-mode .gradient-info,
+.a11y-dark-mode .gradient-saffron,
+.a11y-dark-mode .gradient-tricolor,
+.a11y-dark-mode .gradient-text-accent,
+.a11y-dark-mode .animate-marquee {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.a11y-dark-mode .animate-marquee img {
+  filter: none;
+}
