@@ -8,6 +8,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { Providers } from '@/components/Providers';
 import { PrototypeBanner } from '@/components/PrototypeBanner';
+import { ChatWidget } from '@/components/ChatWidget';
 
 export const metadata: Metadata = {
   title: 'Citizen Services Portal — National Portal of India (Demo)',
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <PortalChrome>{children}</PortalChrome>
             <Footer />
             <CookieConsent />
+            <ChatWidget />
           </SmoothScrollProvider>
         </Providers>
       </body>

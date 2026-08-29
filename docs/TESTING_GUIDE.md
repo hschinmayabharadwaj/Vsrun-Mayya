@@ -84,6 +84,14 @@ Expected response:
 }
 ```
 
+### Demo Auth Token
+
+Protected endpoints require a `Authorization: Bearer <token>` header. Without Firebase credentials the backend runs a **demo bypass**: any non-JWT token is accepted as an identity (e.g. `demo-user`). Use it for all protected calls below.
+
+```bash
+curl -H "Authorization: Bearer demo-user" http://localhost:4000/api/dashboard
+```
+
 ### Test All Endpoints
 
 ```bash
@@ -108,15 +116,16 @@ curl "http://localhost:4000/api/services?popular=true"
 # 7. Get single service by slug
 curl http://localhost:4000/api/services/birth-certificate
 
-# 8. List applications
-curl http://localhost:4000/api/applications
+# 8. List applications (protected)
+curl -H "Authorization: Bearer demo-user" http://localhost:4000/api/applications
 
-# 9. Track application by ID
-curl http://localhost:4000/api/applications/track/RES-2026-8842
+# 9. Track application by ID (protected)
+curl -H "Authorization: Bearer demo-user" http://localhost:4000/api/applications/track/RES-2026-8842
 
-# 10. Submit new application
+# 10. Submit new application (protected)
 curl -X POST http://localhost:4000/api/applications \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer demo-user" \
   -d '{
     "serviceId": "svc-birth-cert",
     "citizenId": "demo-citizen-001",
@@ -124,12 +133,13 @@ curl -X POST http://localhost:4000/api/applications \
     "formData": {"name": "Test User", "dob": "2000-01-01"}
   }'
 
-# 11. Dashboard
-curl http://localhost:4000/api/dashboard
+# 11. Dashboard (protected)
+curl -H "Authorization: Bearer demo-user" http://localhost:4000/api/dashboard
 
-# 12. Submit grievance
+# 12. Submit grievance (protected)
 curl -X POST http://localhost:4000/api/grievances \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer demo-user" \
   -d '{
     "category": "service-delay",
     "subject": "Slow processing",
@@ -139,8 +149,8 @@ curl -X POST http://localhost:4000/api/grievances \
     "phone": "+91 98765 43210"
   }'
 
-# 13. Track grievance (use ID from step 12)
-curl http://localhost:4000/api/grievances/track/GRIEV-001
+# 13. Track grievance (use ID from step 12; protected)
+curl -H "Authorization: Bearer demo-user" http://localhost:4000/api/grievances/track/GRIEV-001
 
 # 14. Portal content endpoints
 curl http://localhost:4000/api/portal/config
@@ -153,11 +163,207 @@ curl http://localhost:4000/api/portal/terms
 curl http://localhost:4000/api/portal/directory-nav
 curl http://localhost:4000/api/portal/footer-links
 curl http://localhost:4000/api/portal/grievance-categories
+
+# 15. Register / upsert demo citizen (protected)
+curl -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer demo-user" \
+  -d '{"name":"Demo Citizen","phone":"+91 00000 00000"}'
 ```
 
-### Interactive API Docs
+### Chat Assistant Tests (`/api/chat`)
 
-Open http://localhost:4000/docs in your browser for Swagger UI.
+```bash
+# 1. Service lookup (top-k service match + deep link)
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"How do I get an income certificate?"}'
+
+# 2. Helplines
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Emergency helplines"}'
+
+# 3. Application tracking
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"How to track my application?"}'
+
+# 4. Grievance guidance
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"How do I file a grievance?"}'
+
+# 5. Greeting
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"hi"}'
+
+# 6. No-match fallback (still returns links)
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"xyzzy qwerty"}'
+
+# 7. Validation: empty / too-long message → 400
+curl -X POST http://localhost:4000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":""}'
+```
+
+Expected responses: `success: true`, `data.answer`, `data.intent` (`service`/`helpline`/`track`/`grievance`/`greeting`/`faq`/`fallback`), optional `data.links[]` with `label` + `href`. Empty message body → `400` validation error.
+
+### Interactive API Docs (Swagger UI)
+
+The backend ships **Swagger UI** (interactive, try-it-in-browser) and **ReDoc** (read-only). No UI of the portal itself is needed — everything lives at one URL.
+
+- Swagger UI (interactive): http://localhost:4000/docs
+- ReDoc (documentation only): http://localhost:4000/redoc
+
+#### How to use Swagger UI
+
+1. Start the backend, then open http://localhost:4000/docs.
+2. Endpoints are grouped by **tag** (bars on the right): `health`, `auth`, `services`, `applications`, `dashboard`, `grievances`, `portal`, `chat`.
+3. Click any endpoint to expand it, then **Try it out** (top-right of that block).
+4. Fill in the parameters/body, then **Execute**. The response (status code, headers, JSON body) appears below.
+5. For any non-`GET` endpoint, Swagger pre-fills a sample JSON body — edit and Execute.
+
+#### Authenticating protected endpoints in Swagger
+
+`/api/applications`, `/api/dashboard`, `/api/grievances`, and `/api/auth/register` require auth. This app reads auth from an **`Authorization` header parameter** (there is **no Authorize button**). For each protected endpoint:
+
+1. After clicking **Try it out**, find the **`authorization`** header field.
+2. Enter: `Bearer demo-user`
+3. Execute → returns `200` (demo bypass; no Firebase needed).
+
+> The chat endpoint `/api/chat` and all `services` / `portal` / `health` endpoints are **public** — leave the authorization field empty.
+
+#### Guided walkthrough (endpoint → what to send → expected status)
+
+| # | Endpoint | Set / send | Expect |
+|---|---|---|---|
+| 1 | `GET /api/health` | nothing | `200` `data.status: "healthy"` |
+| 2 | `GET /api/services` | nothing | `200` list of 12 services |
+| 3 | `GET /api/services/{slug}` | path: `birth-certificate` | `200` single service |
+| 4 | `POST /api/chat` | body: `{"message":"Emergency helplines"}` | `200` `intent: "helpline"` + numbers |
+| 5 | `GET /api/applications` | auth header: `Bearer demo-user` | `200` list of applications |
+| 6 | `POST /api/applications` | auth header + body below | `201` created app with reference ID |
+| 7 | `GET /api/dashboard` | auth header: `Bearer demo-user` | `200` citizen + apps + notifications |
+| 8 | `POST /api/auth/register` | auth header + body: `{"name":"Demo Citizen","phone":""}` | `201` citizen |
+| 9 | `POST /api/grievances` | auth header + body below | `201` grievance with ID |
+| 10 | `GET /api/grievances/track/{grievance_id}` | auth header + ID from step 9 | `200` grievance record |
+| 11 | `POST /api/chat` | body: `{"message":""}` | `400` validation error |
+| 12 | `GET /api/applications` | no header | `401` "Sign in is required" |
+
+Sample bodies for Swagger:
+
+```json
+// POST /api/applications
+{
+  "serviceId": "svc-birth-cert",
+  "citizenId": "demo-citizen-001",
+  "citizenName": "Demo Citizen",
+  "formData": { "name": "Test User", "dob": "2000-01-01" },
+  "saveAsDraft": false
+}
+
+// POST /api/grievances
+{
+  "category": "service-delay",
+  "subject": "Slow processing",
+  "description": "My application has been pending for over 2 weeks and there has been no update on the portal.",
+  "name": "",
+  "email": "",
+  "phone": ""
+}
+```
+
+#### Reading a response
+
+- `success: true` → call succeeded; real payload is under `data`.
+- `success: false` → failure; reason is under `error`.
+- Status codes you may see: `200` OK, `201` created, `400` validation, `401` unauthenticated, `404` not found, `429` rate-limited.
+- To copy the exact `curl` for any request, click the red **Request URL / curl** line under the endpoint after `Execute` — great for reproducing a test without the browser.
+
+#### Swagger extras
+
+- The top search bar filters endpoints by name (e.g. type `chat`, `grievance`).
+- `POST /api/chat` — note the `ChatMessage` schema shows `message` (required, 1–500 chars) and optional `history`.
+- Expand any schema name (`ChatReply`, `Service`, `Application`, `GrievanceRecord`) to see its fields and defaults.
+
+---
+
+### Complete Request-Body Reference (every route)
+
+Every route the server exposes, with what to fill in Swagger (`authorization` header, path/query params, or JSON body) and the expected status. 🔒 = set `authorization` header to `Bearer demo-user`.
+
+#### Public GET routes (no body)
+
+| Method | Route | Query parameters (optional) | Expect |
+|---|---|---|---|
+| `GET` | `/` | — | `200` API info object |
+| `GET` | `/api/health` | — | `200` healthy |
+| `GET` | `/api/services` | `category` = `identity_civil` · `education_skills` · `health_welfare` · `business_trade` · `housing_land`<br/>`onlineOnly` = `true`/`false` · `search` = any word · `popular` = `true`/`false` | `200` list of services |
+| `GET` | `/api/portal/config` | — | `200` portal config |
+| `GET` | `/api/portal/notices` | — | `200` notices |
+| `GET` | `/api/portal/directory-nav` | — | `200` nav links |
+| `GET` | `/api/portal/footer-links` | — | `200` footer links |
+| `GET` | `/api/portal/helplines` | — | `200` helplines |
+| `GET` | `/api/portal/policies` | — | `200` policies |
+| `GET` | `/api/portal/faqs` | — | `200` FAQs |
+| `GET` | `/api/portal/privacy` | — | `200` privacy sections |
+| `GET` | `/api/portal/terms` | — | `200` terms sections |
+| `GET` | `/api/portal/grievance-categories` | — | `200` categories |
+
+#### Path-parameter GET routes
+
+| Method | Route | Path parameter | Expect |
+|---|---|---|---|
+| `GET` | `/api/services/{slug}` | `birth-certificate` · `income-certificate` · `pension-scheme` · `domicile-certificate` · `driving-license` · `scholarships` · `legal-heir` · `police-clearance` · `national-id-renewal` · `business-license` · `health-insurance` · `university-scholarship` | `200` service / `404` |
+| 🔒 `GET` | `/api/applications` | — | `200` list of applications |
+| 🔒 `GET` | `/api/applications/track/{app_id}` | e.g. `RES-2026-8842` (from a created application) | `200` / `404` |
+| 🔒 `GET` | `/api/dashboard` | — | `200` citizen + applications + notifications + drafts |
+| 🔒 `GET` | `/api/grievances/track/{grievance_id}` | e.g. `GRIEV-001` (from a created grievance) | `200` / `404` |
+
+#### POST routes with JSON bodies
+
+**`POST /api/chat`** — public. Body (`ChatMessage`):
+```json
+{ "message": "How do I get an income certificate?", "history": [] }
+```
+- `message`: required, 1–500 chars. `history`: optional list of past turns — omit it or leave it empty.
+- Expect: `200`; or `400` when `message` is empty.
+- Example bodies: `{"message":"Emergency helplines"}`, `{"message":"hi"}`, `{"message":"xyzzy"}`, `{"message":""}` → `400`.
+
+**🔒 `POST /api/auth/register`** — body (`RegisterUserPayload`), both fields optional:
+```json
+{ "name": "Demo Citizen", "phone": "+91 00000 00000" }
+```
+- Expect: `201` citizen record.
+
+**🔒 `POST /api/applications`** — body (`CreateApplicationPayload`), `serviceId` required:
+```json
+{
+  "serviceId": "svc-birth-cert",
+  "citizenId": "demo-citizen-001",
+  "citizenName": "Demo Citizen",
+  "formData": { "name": "Test User", "dob": "2000-01-01" },
+  "saveAsDraft": false
+}
+```
+- Any `serviceId` works; returns `201` with reference ID under `data.id`.
+
+**🔒 `POST /api/grievances`** — body (`GrievancePayload`), `description` ≥ 20 chars:
+```json
+{
+  "category": "service-delay",
+  "subject": "Slow processing",
+  "description": "My application has been pending for over 2 weeks and there has been no update on the portal.",
+  "name": "",
+  "email": "",
+  "phone": ""
+}
+```
+- Expect: `201` grievance with `data.id`; `400` if description too short.
 
 ### Rate Limiting Test
 
@@ -185,6 +391,31 @@ curl -X POST http://localhost:4000/api/grievances \
 ```
 
 Expected: `400 Bad Request` with field-level error details.
+
+### Auth & CORS Tests
+
+```bash
+# 1. Protected endpoint without a token → 401
+curl http://localhost:4000/api/applications
+
+# 2. Demo token works
+curl -H "Authorization: Bearer any-non-jwt-string" http://localhost:4000/api/applications
+
+# 3. CORS preflight from the frontend origin (→ 200 + allow headers)
+curl -i -X OPTIONS http://localhost:4000/api/chat \
+  -H "Origin: http://localhost:3000" \
+  -H "Access-Control-Request-Method: POST"
+```
+
+Expected: no header → `401`; any non-JWT token → `200`; preflight → `200` with `access-control-allow-origin: http://localhost:3000`.
+
+### Unknown Route Test
+
+```bash
+curl -i http://localhost:4000/api/does-not-exist
+```
+
+Expected: `404` with `{"success": false, "error": "Not Found"}`.
 
 ---
 

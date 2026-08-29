@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
-from app.routers import applications, auth, dashboard, grievances, health, portal, services
+from app.routers import applications, auth, chat, dashboard, grievances, health, portal, services
 from app.services.firebase_client import get_storage_mode
 
 _request_log: dict[str, list[float]] = defaultdict(list)
@@ -95,6 +95,7 @@ def create_app() -> FastAPI:
                 "dashboard": "/api/dashboard",
                 "grievances": "/api/grievances",
                 "portal": "/api/portal",
+                "chat": "/api/chat",
                 "openapi": "/docs",
             },
         }
@@ -106,6 +107,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
     app.include_router(grievances.router, prefix="/api/grievances", tags=["grievances"])
     app.include_router(portal.router, prefix="/api/portal", tags=["portal"])
+    app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 
     return app
 

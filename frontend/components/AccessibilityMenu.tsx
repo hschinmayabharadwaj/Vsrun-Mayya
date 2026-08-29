@@ -48,6 +48,7 @@ export function AccessibilityMenu() {
     root.classList.toggle('a11y-high-contrast', options.find((o) => o.id === 'high-contrast')?.enabled ?? false);
     root.classList.toggle('a11y-large-text', options.find((o) => o.id === 'large-text')?.enabled ?? false);
     root.classList.toggle('a11y-reduce-motion', options.find((o) => o.id === 'reduce-motion')?.enabled ?? false);
+    root.classList.toggle('a11y-dark-mode', options.find((o) => o.id === 'dark-mode')?.enabled ?? false);
   }, [options]);
 
   useEffect(() => {

@@ -66,6 +66,8 @@ import {
   Volume2,
   MousePointer,
   LogOut,
+  Headset,
+  Bot,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -117,6 +119,8 @@ const iconMap: Record<string, LucideIcon> = {
   report_problem: AlertTriangle,
   warning: AlertTriangle,
   log_out: LogOut,
+  support_agent: Headset,
+  robot: Bot,
   fingerprint: Fingerprint,
   school: GraduationCap,
   local_hospital: Hospital,
