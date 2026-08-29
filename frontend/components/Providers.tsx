@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const signIn = async (email?: string, _password?: string) => {
+  const signIn = async (email?: string) => {
     const demo: User = {
       uid: 'demo-uid-001',
       displayName: email?.split('@')[0] || 'Citizen',

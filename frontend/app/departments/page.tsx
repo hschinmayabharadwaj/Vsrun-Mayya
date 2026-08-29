@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { InfoPageLayout, ContentCard, PageLink } from '@/components/InfoPageLayout';
+import { InfoPageLayout, ContentCard } from '@/components/InfoPageLayout';
 import { Icon } from '@/components/Icon';
 import { apiFetch } from '@/lib/api';
-import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import { StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import type { Service } from '@/lib/types';
 
 function groupByDepartment(services: Service[]) {

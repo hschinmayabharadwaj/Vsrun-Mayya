@@ -2,8 +2,7 @@ import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { getNotices, getPortalConfig } from '@/lib/portal-api';
 import { ServiceCard } from '@/components/ServiceCard';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Icon } from '@/components/Icon';
 import type { Service } from '@/lib/types';
 
@@ -18,12 +17,11 @@ const categories = [
 
 export default async function HomePage() {
   let popularServices: Service[] = [];
-  let notices: Awaited<ReturnType<typeof getNotices>> = [];
   let config: Awaited<ReturnType<typeof getPortalConfig>> | null = null;
   let error: string | null = null;
 
   try {
-    [popularServices, notices, config] = await Promise.all([
+    [popularServices, , config] = await Promise.all([
       apiFetch<Service[]>('/api/services?popular=true'),
       getNotices(),
       getPortalConfig(),
@@ -32,7 +30,6 @@ export default async function HomePage() {
     error = e instanceof Error ? e.message : 'Unable to load portal content';
   }
 
-  const siteName = config?.siteName ?? 'Citizen Services Portal';
   const contact = config?.contact;
 
   return (
@@ -174,7 +171,7 @@ export default async function HomePage() {
           <StaggerContainer className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {popularServices.slice(0, 6).map((service) => (
               <StaggerItem key={service.id}>
-                <ServiceCard service={service} compact />
+                <ServiceCard service={service} />
               </StaggerItem>
             ))}
           </StaggerContainer>
