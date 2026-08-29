@@ -111,6 +111,24 @@ a {
     background: linear-gradient(135deg, var(--gov-link) 0%, var(--gov-link) 100%);
   }
 
+  /* Chat header accent helpers — orange is active by default; swap the class
+     on the header for green or blue and this comment is where you pick. */
+  .gradient-chat-orange {
+    background: linear-gradient(135deg, #f97316 0%, #c2410c 100%);
+  }
+
+  .gradient-chat-green {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  }
+
+  .gradient-chat-blue {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  }
+
+  .gradient-chat{
+    background: linear-gradient(135deg, #f97316 0%, #f97316 100%);
+  }
+
   .gradient-text {
     background: linear-gradient(135deg, var(--gov-red) 0%, var(--gov-link) 100%);
     -webkit-background-clip: text;
@@ -256,10 +274,25 @@ textarea:focus {
 .a11y-dark-mode .gradient-saffron,
 .a11y-dark-mode .gradient-tricolor,
 .a11y-dark-mode .gradient-text-accent,
+.a11y-dark-mode .gradient-chat-orange,
+.a11y-dark-mode .gradient-chat-green,
+.a11y-dark-mode .gradient-chat-blue,
 .a11y-dark-mode .animate-marquee {
   filter: invert(1) hue-rotate(180deg);
 }
 
 .a11y-dark-mode .animate-marquee img {
   filter: none;
+}
+
+/* Disco blinking for the chat floating icon — cycles orange, blue, green */
+@keyframes chat-disco {
+  0%, 30% { color: #ff9a3d; }
+  33%, 63% { color: #3b82f6; }
+  66%, 96% { color: #22c55e; }
+  100% { color: #ff9a3d; }
+}
+
+.chat-disco-icon {
+  animation: chat-disco 4.2s step-end infinite;
 }

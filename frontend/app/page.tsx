@@ -3,6 +3,7 @@ import { apiFetch } from '@/lib/api';
 import { getNotices, getPortalConfig } from '@/lib/portal-api';
 import { ServiceCard } from '@/components/ServiceCard';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { BannerCarousel } from '@/components/BannerCarousel';
 import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Icon } from '@/components/Icon';
 import type { Service } from '@/lib/types';
@@ -144,6 +145,9 @@ export default async function HomePage() {
           </div>
         </section>
       </FadeIn>
+
+      {/* Announcement carousel */}
+      <BannerCarousel />
 
       {/* Popular services */}
       <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-10 md:py-14">

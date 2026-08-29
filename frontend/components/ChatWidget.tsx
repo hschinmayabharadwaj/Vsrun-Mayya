@@ -87,7 +87,11 @@ export function ChatWidget() {
             className="mb-3 flex h-[min(560px,65vh)] w-[min(calc(100vw-2rem),380px)] flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface shadow-elevated"
           >
             {/* Header */}
-            <div className="flex items-center gap-3 gradient-primary px-4 py-3 text-white shrink-0">
+            {/* <div className="flex items-center gap-3 gradient-primary px-4 py-3 text-white shrink-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20"> */}
+            {/* Header — orange is active. Swap `gradient-chat-orange` for
+                `gradient-chat-green` or `gradient-chat-blue` to preview. */}
+            <div className="gradient-chat flex items-center gap-3 px-4 py-3 text-white shrink-0">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
                 <Icon name="robot" size={20} />
               </div>
@@ -191,7 +195,7 @@ export function ChatWidget() {
                 type="submit"
                 disabled={!input.trim() || loading}
                 aria-label="Send"
-                className="btn-primary flex h-11 w-11 shrink-0 items-center justify-center rounded-xl p-0 text-white disabled:opacity-40"
+                className="btn-primary gradient-chat flex h-11 w-11 shrink-0 items-center justify-center rounded-xl p-0 text-white disabled:opacity-50"
               >
                 <Icon name="send" size={18} />
               </button>
@@ -205,11 +209,16 @@ export function ChatWidget() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          aria-label="Open chat assistant"
           aria-expanded={false}
-          className="gradient-primary flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-elevated"
+          className="bg-[#123A63] flex h-14 shrink-0 items-center justify-center rounded-full text-white shadow-elevated"
+          aria-label="Citizen Services Assistant — chat with us"
         >
-          <Icon name="robot" size={26} />
+          <span className="relative flex h-full w-full items-center justify-center gap-2.5 px-4">
+            <Icon name="robot" size={26} className="chat-disco-icon" />
+            <span className="hidden whitespace-nowrap text-body-sm font-semibold sm:block">
+              Need help? Chat with us
+            </span>
+          </span>
         </button>
       )}
     </div>
