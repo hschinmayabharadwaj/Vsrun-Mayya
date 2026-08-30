@@ -5,7 +5,6 @@ import { ServiceCard } from '@/components/ServiceCard';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { BannerCarousel } from '@/components/BannerCarousel';
 import { FadeIn, SlideUp, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
-import { FadeIn, StaggerContainer, StaggerItem } from '@/components/MotionWrappers';
 import { Icon } from '@/components/Icon';
 import type { Service } from '@/lib/types';
 
